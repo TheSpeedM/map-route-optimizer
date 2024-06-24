@@ -1,14 +1,21 @@
 import { useState } from "react"
-import { Circle } from "react-konva"
+import { Group, Circle, Text } from "react-konva"
 
-export const Destination = ({ initialValues, draggable, blocksize }) => {
+const clamp = (min, value, max) => {
+  return Math.min(max, Math.max(min, value));
+}
+
+export const Destination = ({ initialValues, draggable, blocksize, mapSize }) => {
   const [circle, setCircle] = useState({ ...initialValues, isDragging: false });
   const [shadowCircle, setShadowCircle] = useState({ initialValues });
 
   const toGrid = (target) => {
+    const xValue = clamp(50, target.x(), mapSize.x - 50);
+    const yValue = clamp(50, target.y(), mapSize.y - 50);
+
     return {
-      x: Math.round(target.x() / blocksize) * blocksize,
-      y: Math.round(target.y() / blocksize) * blocksize
+      x: Math.round(xValue / blocksize) * blocksize,
+      y: Math.round(yValue / blocksize) * blocksize
     }
   };
 
@@ -21,7 +28,7 @@ export const Destination = ({ initialValues, draggable, blocksize }) => {
   };
 
   const handleOnDragEnd = (e) => {
-    setCircle({...toGrid(e.target), isDragging: false, uniqueKey: Date.now()});
+    setCircle({ ...toGrid(e.target), isDragging: false, uniqueKey: Date.now() });
   };
 
   return (
@@ -31,24 +38,37 @@ export const Destination = ({ initialValues, draggable, blocksize }) => {
         y={shadowCircle?.y || 50}
         width={initialValues?.width || 100}
         height={initialValues?.height || 100}
-        fill={'green'}
+        fill={'lightblue'}
         opacity={0.5}
       />}
 
-      <Circle
-        x={circle?.x || 50}
-        y={circle?.y || 50}
-        width={initialValues?.width || 100}
-        height={initialValues?.height || 100}
+      <Group
+        x={circle?.x || 100}
+        y={circle?.y || 100}
         draggable={draggable}
-        fill={'green'}
         onDragStart={handleOnDragStart}
         onDragMove={handleOnDragMove}
         onDragEnd={handleOnDragEnd}
         scaleX={circle?.isDragging ? 1.2 : 1.0}
         scaleY={circle?.isDragging ? 1.2 : 1.0}
         key={circle?.uniqueKey} // This is to ensure rerender
-      />
+      >
+        <Circle
+          width={initialValues?.width || 50}
+          height={initialValues?.height || 50}
+          fill={'lightblue'}
+        />
+
+        <Text
+          text={initialValues?.index}
+          x={-25}
+          y={-5}
+          width={50}
+          height={50}
+          align="center"
+          verticalAlign="center"
+        />
+      </Group>
     </>
   )
 }

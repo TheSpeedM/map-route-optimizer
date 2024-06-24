@@ -1,4 +1,4 @@
-import { Stage, Layer } from 'react-konva';
+import { Stage, Layer, Circle } from 'react-konva';
 import { useRef, useEffect, useState } from 'react';
 import { effect } from '@preact/signals-react';
 
@@ -31,9 +31,8 @@ export const Map = () => {
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
-
   return (
-    <div className="h-screen w-full" ref={mapRef}>
+    <div className="h-screen w-full bg-gray-100" ref={mapRef}>
       {dimensions.width && dimensions.height && (
         <Stage width={dimensions.width} height={dimensions.height}>
           <Layer>
@@ -43,6 +42,7 @@ export const Map = () => {
                 initialValues={dest}
                 draggable={true}
                 blocksize={BLOCK_SIZE}
+                mapSize={{x: dimensions.width, y: dimensions.height}}
               />
             ))}
           </Layer>
