@@ -1,9 +1,7 @@
 import { useState } from "react"
 import { Group, Circle, Text } from "react-konva"
 
-const clamp = (min, value, max) => {
-  return Math.min(max, Math.max(min, value));
-}
+import { clamp } from "../../../../utils";
 
 export const Destination = ({ initialValues, draggable, blocksize, mapSize }) => {
   const [circle, setCircle] = useState({ ...initialValues, isDragging: false });

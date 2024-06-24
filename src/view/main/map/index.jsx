@@ -3,6 +3,8 @@ import { useRef, useEffect, useState } from 'react';
 import { effect } from '@preact/signals-react';
 
 import { destinations } from '../signals';
+
+import { Robot } from './robot';
 import Destination from './destination';
 
 const BLOCK_SIZE = 100;
@@ -45,6 +47,9 @@ export const Map = () => {
                 mapSize={{x: dimensions.width, y: dimensions.height}}
               />
             ))}
+            <Robot
+            mapSize={{x: dimensions.width, y: dimensions.height}}
+            />
           </Layer>
         </Stage>
       )}
