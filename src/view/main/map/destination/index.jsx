@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Group, Circle, Text } from "react-konva"
 
 import { clamp } from "../../../../utils";
+import { destinationPosition } from "../../signals";
 
 export const Destination = ({ initialValues, draggable, blocksize, mapSize }) => {
   const [circle, setCircle] = useState({ ...initialValues, isDragging: false });
@@ -17,6 +18,16 @@ export const Destination = ({ initialValues, draggable, blocksize, mapSize }) =>
     }
   };
 
+  const updateSignalPos = (position) => {
+    const destinationIndex = destinationPosition.value.findIndex((dest) => dest.index === initialValues.index);
+
+    if (destinationIndex === -1) {
+      destinationPosition.value.push({ ...position, index: initialValues.index });
+    } else {
+      destinationPosition.value[destinationIndex] = { ...position, index: initialValues.index };
+    }
+  };
+
   const handleOnDragStart = () => {
     setCircle({ ...circle, isDragging: true });
   };
@@ -26,8 +37,12 @@ export const Destination = ({ initialValues, draggable, blocksize, mapSize }) =>
   };
 
   const handleOnDragEnd = (e) => {
-    setCircle({ ...toGrid(e.target), isDragging: false, uniqueKey: Date.now() });
+    const newPos = toGrid(e.target);
+    setCircle({ ...newPos, isDragging: false, uniqueKey: Date.now() });
+    updateSignalPos(newPos)
   };
+
+  useEffect(() => updateSignalPos({x: initialValues?.x || 100, y: initialValues?.y || 100}), [])
 
   return (
     <>

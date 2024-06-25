@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Rect } from "react-konva"
 import { clamp } from "../../../../utils";
+import { robotPosition } from "../../signals";
 
 export const Robot = ({ initalValues, mapSize }) => {
   const [rect, setRect] = useState({...initalValues, isDragging: false})
@@ -14,7 +15,11 @@ export const Robot = ({ initalValues, mapSize }) => {
     const newY = clamp(50, e.target.y(), mapSize.y - 100)
 
     setRect({x: newX, y: newY, isDragging: false, uniqueKey: Date.now()});
+
+    robotPosition.value = {x: newX, y: newY}
   };
+
+  useEffect(() => {robotPosition.value = {x: initalValues?.x || 100, y: initalValues?.y || 100}}, [])
 
   return (
     <>
