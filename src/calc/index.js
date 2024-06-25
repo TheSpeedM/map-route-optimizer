@@ -65,7 +65,7 @@ export const findShortestOrder = (robotPosition, destinationPositions) => {
 
   const positions = shortestPath.map((index) => destinationPositions.find((pos) => pos.index === index));
 
-  return [robotPosition, ...positions];
+  return {coords: [robotPosition, ...positions], length: minLength};
 }
 
 export default findShortestOrder;
