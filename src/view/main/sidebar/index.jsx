@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
+
 import { destinations, path, robotPosition, destinationPosition } from "../signals";
 
-import { bruteforceSolve } from "../../../calc/bruteforce";
 import { closestNeighbor } from "../../../calc/closestneigbor";
-import { useState } from "react";
 
 const INITIAL_VALUES = {
   x: 100,
@@ -27,13 +27,21 @@ export const Sidebar = () => {
         className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 m-3"
         onClick={() => {
           const startTime = Date.now();
-          const result = bruteforceSolve(robotPosition.value, destinationPosition.value);
+          const worker = new Worker(new URL('../../../calc/bruteforce', import.meta.url), { type: 'module' });
 
-          if (!result) return;
+          worker.postMessage({
+            robotPosition: robotPosition.value,
+            destinationPositions: destinationPosition.value
+          })
 
-          setExecTime((Date.now() - startTime) / 1000)
-          path.value = result.coords;
-          setLength(result.length);
+          worker.onmessage = (e) => {
+            const result = e.data;
+            if (!result) return;
+
+            setExecTime((Date.now() - startTime) / 1000)
+            path.value = result.coords;
+            setLength(result.length);
+          }
         }}
       >
         Bruteforce (very slow)
