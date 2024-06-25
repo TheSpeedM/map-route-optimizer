@@ -1,6 +1,7 @@
 import { destinations, path, robotPosition, destinationPosition } from "../signals";
 
-import findShortestOrder from "../../../calc";
+import { bruteforceSolve } from "../../../calc/bruteforce";
+import { closestNeighbor } from "../../../calc/closestneigbor";
 import { useState } from "react";
 
 const INITIAL_VALUES = {
@@ -12,27 +13,50 @@ const INITIAL_VALUES = {
 
 export const Sidebar = () => {
   const [length, setLength] = useState(-1);
+  const [execTime, setExecTime] = useState(null);
 
   return (
     <div className="flex flex-col h-screen bg-gray-300">
       <button
         className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 m-3"
-        onClick={() => destinations.value = [...destinations.value, {...INITIAL_VALUES, index: destinations.value.length}]}
+        onClick={() => destinations.value = [...destinations.value, { ...INITIAL_VALUES, index: destinations.value.length }]}
       >
         Add a destination
       </button>
       <button
-      className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 m-3"
-      onClick={() => {
-        const result = findShortestOrder(robotPosition.value, destinationPosition.value);
-        path.value = result.coords;
-        setLength(result.length);
-      }}
+        className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 m-3"
+        onClick={() => {
+          const startTime = Date.now();
+          const result = bruteforceSolve(robotPosition.value, destinationPosition.value);
+
+          if (!result) return;
+
+          setExecTime((Date.now() - startTime) / 1000)
+          path.value = result.coords;
+          setLength(result.length);
+        }}
       >
-        Solve TSP
+        Bruteforce
+      </button>
+
+      <button
+        className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 m-3"
+        onClick={() => {
+          const startTime = Date.now();
+          const result = closestNeighbor(robotPosition.value, destinationPosition.value);
+
+          if (!result) return;
+
+          setExecTime((Date.now() - startTime) / 1000)
+          path.value = result.coords;
+          setLength(result.length);
+        }}
+      >
+        Closest neighbor
       </button>
 
       {length > 0 && <p className="ml-3">Length: {Math.round(length)} px</p>}
+      {execTime !== null && <p className="ml-3">Time: {Math.round(execTime * 10) / 10} s</p>}
     </div>
   )
 }
