@@ -1,11 +1,12 @@
-import { Stage, Layer, Circle } from 'react-konva';
+import { Stage, Layer } from 'react-konva';
 import { useRef, useEffect, useState } from 'react';
 import { effect } from '@preact/signals-react';
 
 import { destinations } from '../signals';
 
 import { Robot } from './robot';
-import Destination from './destination';
+import { Destination } from './destination';
+import { Path } from './path';
 
 const BLOCK_SIZE = 100;
 
@@ -50,6 +51,8 @@ export const Map = () => {
             <Robot
             mapSize={{x: dimensions.width, y: dimensions.height}}
             />
+
+            <Path/>
           </Layer>
         </Stage>
       )}

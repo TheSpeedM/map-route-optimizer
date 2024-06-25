@@ -39,3 +39,5 @@ export const Robot = ({ initalValues, mapSize }) => {
     </>
   )
 }
+
+export default { Robot };

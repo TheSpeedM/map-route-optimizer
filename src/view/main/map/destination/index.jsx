@@ -42,7 +42,7 @@ export const Destination = ({ initialValues, draggable, blocksize, mapSize }) =>
     updateSignalPos(newPos)
   };
 
-  useEffect(() => updateSignalPos({x: initialValues?.x || 100, y: initialValues?.y || 100}), [])
+  useEffect(() => updateSignalPos({ x: initialValues?.x || 100, y: initialValues?.y || 100 }), [])
 
   return (
     <>
@@ -86,4 +86,4 @@ export const Destination = ({ initialValues, draggable, blocksize, mapSize }) =>
   )
 }
 
-export default Destination
+export default { Destination };

@@ -1,4 +1,4 @@
-import { destinations, robotPosition, destinationPosition } from "../signals";
+import { destinations, path, robotPosition, destinationPosition } from "../signals";
 
 import findShortestOrder from "../../../calc";
 
@@ -20,7 +20,7 @@ export const Sidebar = () => {
       </button>
       <button
       className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 m-3"
-      onClick={() => findShortestOrder(robotPosition.value, destinationPosition.value)}
+      onClick={() => path.value = findShortestOrder(robotPosition.value, destinationPosition.value)}
       >
         Solve TSP
       </button>

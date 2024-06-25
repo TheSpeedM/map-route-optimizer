@@ -61,9 +61,11 @@ export const findShortestOrder = (robotPosition, destinationPositions) => {
 
   const totalLengths = paths.map((path) => calculatePathLength([-1, ...path], lookupTable));
   const minLength = Math.min(...totalLengths)
-  const shortestPath = [-1, ...paths[totalLengths.indexOf(minLength)]]
+  const shortestPath = paths[totalLengths.indexOf(minLength)]
 
-  console.log(shortestPath);
+  const positions = shortestPath.map((index) => destinationPositions.find((pos) => pos.index === index));
+
+  return [robotPosition, ...positions];
 }
 
 export default findShortestOrder;
