@@ -14,8 +14,7 @@ const getClosest = (startIndex, lookupTable, excludeIndexes = []) => {
   const distances = filteredTable.map((item) => item[2]);
   const minDistance = Math.min(...distances);
 
-  console.log(distances, minDistance)
-  const lookupTableItem = lookupTable.find((item) => item[2] === minDistance);
+  const lookupTableItem = filteredTable.find((item) => item[2] === minDistance);
   const nextItem = lookupTableItem.find((i) => i.index !== startIndex)
   return nextItem.index;
 }
@@ -26,14 +25,12 @@ export const closestNeighbor = (robotPosition, destinationPositions) => {
 
   indexOrder.push(getClosest(-1, lookupTable));
 
-  for (let i = 0; i < destinationPositions.length - 3; i++) {
-    indexOrder.push(getClosest(indexOrder.slice(-1)[0], lookupTable, indexOrder.slice(0, -1)))
+  while (indexOrder.length !== destinationPositions.length + 1) {
+    const startIndex = indexOrder.at(-1);
+    const excludeIndexes = indexOrder.slice(0, -1);
+    const nextIndex = getClosest(startIndex, lookupTable, excludeIndexes)
+    indexOrder.push(nextIndex);
   }
-
-  const indexes = destinationPositions.map((item) => item.index);
-  indexOrder.push(
-    indexes.find((i) => !indexOrder.includes(i))
-  );
 
   const positions = indexOrder.slice(1).map((index) => destinationPositions.find((pos) => pos.index === index));
 

@@ -36,7 +36,7 @@ export const Sidebar = () => {
           setLength(result.length);
         }}
       >
-        Bruteforce
+        Bruteforce (very slow)
       </button>
 
       <button
