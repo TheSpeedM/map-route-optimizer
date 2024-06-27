@@ -1,15 +1,18 @@
 import { useState, useRef } from "react";
-import { destinations, path, robotPosition, destinationPosition } from "../signals";
+import { blocksize, mapSize, destinations, path, robotPosition, destinationPosition } from "../signals";
 
 const INITIAL_VALUES = {
-  x: 100,
-  y: 100,
   width: 50,
   height: 50
 };
 
 const addDestination = () => {
-  destinations.value = [...destinations.value, { ...INITIAL_VALUES, index: destinations.value.length }];
+  destinations.value = [...destinations.value, {
+    ...INITIAL_VALUES,
+    x: Math.round(Math.random() * ((mapSize.value.width - 200) / blocksize)) * blocksize + 100,
+    y: Math.round(Math.random() * ((mapSize.value.height - 200) / blocksize)) * blocksize + 100,
+    index: destinations.value.length
+  }];
 };
 
 const removeDestination = () => {
@@ -17,6 +20,11 @@ const removeDestination = () => {
     destinations.value = destinations.value.slice(0, -1);
     destinationPosition.value = destinationPosition.value.slice(0, -1);
   }
+};
+
+const clearDestinations = () => {
+  destinations.value = [];
+  destinationPosition.value = [];
 };
 
 const workerScripts = {
@@ -84,7 +92,13 @@ export const Sidebar = () => {
           className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
           onClick={removeDestination}
         >
-          Remove destination
+          Remove last destination
+        </button>
+        <button
+          className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+          onClick={clearDestinations}
+        >
+          Clear all destinations
         </button>
       </div>
       <div className="flex flex-col py-3 mx-3 gap-1">
@@ -138,7 +152,7 @@ export const Sidebar = () => {
               spread: spreadRef.current.value
             })}
         >
-          Look ahead solve
+          Solve!
         </button>
       </div>
 

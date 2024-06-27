@@ -2,13 +2,11 @@ import { Stage, Layer } from 'react-konva';
 import { useRef, useEffect, useState } from 'react';
 import { effect } from '@preact/signals-react';
 
-import { destinations } from '../signals';
+import { blocksize, mapSize, destinations } from '../signals';
 
 import { Robot } from './robot';
 import { Destination } from './destination';
 import { Path } from './path';
-
-const BLOCK_SIZE = 100;
 
 export const Map = () => {
   const mapRef = useRef();
@@ -20,10 +18,13 @@ export const Map = () => {
   useEffect(() => {
     const updateSize = () => {
       if (mapRef.current) {
-        setDimensions({
+        const mapObj = {
           width: mapRef.current.clientWidth,
           height: mapRef.current.clientHeight,
-        });
+        }
+
+        setDimensions(mapObj);
+        mapSize.value = mapObj;
       }
     };
 
@@ -44,15 +45,14 @@ export const Map = () => {
                 key={index}
                 initialValues={dest}
                 draggable={true}
-                blocksize={BLOCK_SIZE}
-                mapSize={{x: dimensions.width, y: dimensions.height}}
+                blocksize={blocksize}
+                mapSize={{ x: dimensions.width, y: dimensions.height }}
               />
             ))}
             <Robot
-            mapSize={{x: dimensions.width, y: dimensions.height}}
+              mapSize={{ x: dimensions.width, y: dimensions.height }}
             />
-
-            <Path/>
+            <Path />
           </Layer>
         </Stage>
       )}

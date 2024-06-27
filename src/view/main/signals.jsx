@@ -1,5 +1,8 @@
 import { signal } from "@preact/signals-react";
 
+const blocksize  = signal(100);
+const mapSize = signal({});
+
 // Used for displaying
 const destinations = signal([]);
 const path = signal([]);
@@ -8,4 +11,4 @@ const path = signal([]);
 const robotPosition = signal({ x: 0, y: 0 });
 const destinationPosition = signal([]); // {x, y, index}
 
-export { destinations, path, robotPosition, destinationPosition };
+export { blocksize, mapSize, destinations, path, robotPosition, destinationPosition };

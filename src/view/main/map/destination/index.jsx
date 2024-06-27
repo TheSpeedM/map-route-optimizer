@@ -4,6 +4,11 @@ import { Group, Circle, Text } from "react-konva"
 import { clamp } from "../../../../utils";
 import { destinationPosition } from "../../signals";
 
+const roundXY = (x, y, blocksize) => ({
+  x: Math.round(x / blocksize) * blocksize,
+  y: Math.round(y / blocksize) * blocksize
+})
+
 export const Destination = ({ initialValues, draggable, blocksize, mapSize }) => {
   const [circle, setCircle] = useState({ ...initialValues, isDragging: false });
   const [shadowCircle, setShadowCircle] = useState({ initialValues });
@@ -12,10 +17,7 @@ export const Destination = ({ initialValues, draggable, blocksize, mapSize }) =>
     const xValue = clamp(50, target.x(), mapSize.x - 50);
     const yValue = clamp(50, target.y(), mapSize.y - 50);
 
-    return {
-      x: Math.round(xValue / blocksize) * blocksize,
-      y: Math.round(yValue / blocksize) * blocksize
-    }
+    return roundXY(xValue, yValue, blocksize);
   };
 
   const updateSignalPos = (position) => {
