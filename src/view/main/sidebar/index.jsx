@@ -32,46 +32,50 @@ const workerScripts = {
   closestneigbor: new URL('../../../calc/closestneigbor', import.meta.url),
   lookahead: new URL('../../../calc/lookahead', import.meta.url)
 };
-
-const executeWorker = (workerType, worker, setWorker, setLength, setExecTime, params = {}) => {
-  const startTime = Date.now();
-
-  if (worker !== null) {
-    worker.terminate();
-  }
-
-  const newWorker = new Worker(workerScripts[workerType], { type: 'module' });
-
-  newWorker.postMessage({
-    robotPosition: robotPosition.value,
-    destinationPositions: destinationPosition.value,
-    ...params
-  });
-
-  newWorker.onmessage = (e) => {
-    const result = e.data;
-    if (!result) return;
-
-    setExecTime((Date.now() - startTime) / 1000);
-    path.value = result.coords;
-    setLength(result.length);
-    setWorker(null);
-  };
-
-  newWorker.onerror = (e) => {
-    console.error(e.message);
-  }
-
-  setWorker(newWorker);
-};
-
 export const Sidebar = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [length, setLength] = useState(-1);
   const [execTime, setExecTime] = useState(null);
   const [worker, setWorker] = useState(null);
-
+  
   const spreadRef = useRef();
   const lookaheadRef = useRef();
+  
+  const executeWorker = (workerType, params = {}) => {
+    const startTime = Date.now();
+  
+    if (worker !== null) {
+      worker.terminate();
+    }
+  
+    const newWorker = new Worker(workerScripts[workerType], { type: 'module' });
+  
+    newWorker.postMessage({
+      robotPosition: robotPosition.value,
+      destinationPositions: destinationPosition.value,
+      ...params
+    });
+  
+    newWorker.onmessage = (e) => {
+      const result = e.data;
+      if (!result) return;
+  
+      setExecTime((Date.now() - startTime) / 1000);
+      path.value = result.coords;
+      setLength(result.length);
+      setWorker(null);
+      setIsLoading(false);
+    };
+  
+    newWorker.onerror = (e) => {
+      console.error(e.message);
+      setWorker(null);
+      setIsLoading(false);
+    }
+  
+    setWorker(newWorker);
+    setIsLoading(true);
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-300 divide-y divide-gray-400">
@@ -157,6 +161,7 @@ export const Sidebar = () => {
       </div>
 
       <div className="flex flex-col py-3 mx-3">
+        {isLoading && <p>Finding shortest path...</p>}
         {length > 0 && <p>Length: {Math.round(length)} px</p>}
         {execTime !== null && <p>Time: {Math.round(execTime * 10) / 10} s</p>}
       </div>
