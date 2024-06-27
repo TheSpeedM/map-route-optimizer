@@ -20,7 +20,7 @@ const getPermutations = (array) => {
   return results;
 }
 
-const bruteforceSolve = (robotPosition, destinationPositions) => {
+export const bruteforceSolve = (robotPosition, destinationPositions) => {
   const lookupTable = calculateLengths([{ ...robotPosition, index: -1 }, ...destinationPositions]);
 
   const indexes = destinationPositions.map((item) => item.index);
@@ -36,10 +36,9 @@ const bruteforceSolve = (robotPosition, destinationPositions) => {
 }
 
 self.onmessage = (event) => {
-  console.log(event.data);
   const { robotPosition, destinationPositions } = event.data;
   const result = bruteforceSolve(robotPosition, destinationPositions);
   postMessage(result);
 }
 
-// export default { bruteforceSolve };
+export default { bruteforceSolve };

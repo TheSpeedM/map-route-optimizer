@@ -19,7 +19,7 @@ const getClosest = (startIndex, lookupTable, excludeIndexes = []) => {
   return nextItem.index;
 }
 
-export const closestNeighbor = (robotPosition, destinationPositions) => {
+export const closestNeighborSolve = (robotPosition, destinationPositions) => {
   const lookupTable = calculateLengths([{ ...robotPosition, index: -1 }, ...destinationPositions]);
   const indexOrder = [-1];
 
@@ -35,8 +35,12 @@ export const closestNeighbor = (robotPosition, destinationPositions) => {
   const positions = indexOrder.slice(1).map((index) => destinationPositions.find((pos) => pos.index === index));
 
   return { coords: [robotPosition, ...positions], length: calculatePathLength(indexOrder, lookupTable) };
-
-
 }
 
-export default { closestNeighbor };
+self.onmessage = (event) => {
+  const { robotPosition, destinationPositions } = event.data;
+  const result = closestNeighborSolve(robotPosition, destinationPositions);
+  postMessage(result);
+}
+
+export default { closestNeighborSolve };
