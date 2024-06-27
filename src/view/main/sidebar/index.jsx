@@ -67,7 +67,13 @@ export const Sidebar = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-300 divide-y divide-gray-400">
+      <div className="py-3 mx-3">
+        <h1 className="text-xl font-bold ">Map Route Optimizer</h1>
+        <h2 className="font-light">TSP playground</h2>
+      </div>
+
       <div className="flex flex-col py-3 mx-3 gap-1">
+        <h3 className="font-semibold">Destinations</h3>
         <button
           className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
           onClick={addDestination}
@@ -82,6 +88,7 @@ export const Sidebar = () => {
         </button>
       </div>
       <div className="flex flex-col py-3 mx-3 gap-1">
+        <h3 className="font-semibold">Simple algorithms</h3>
         <button
           className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
           onClick={() => executeWorker('bruteforce', worker, setWorker, setLength, setExecTime)}
@@ -97,6 +104,7 @@ export const Sidebar = () => {
       </div>
 
       <div className="flex flex-col py-3 mx-3 gap-2">
+        <h3 className="font-semibold">Custom algorithm</h3>
         <div className="flex text-sm gap-3">
           <p>Spread</p>
           <input
