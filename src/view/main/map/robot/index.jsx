@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Rect } from "react-konva"
 import { clamp } from "../../../../utils";
-import { robotPosition } from "../../signals";
+import { robotPosition, path } from "../../signals";
 
 export const Robot = ({ initalValues, mapSize }) => {
   const [rect, setRect] = useState({...initalValues, isDragging: false})
 
   const handleOnDragStart = (e) => {
     setRect({...rect, isDragging: true});
+    path.value = [];
   };
 
   const handleOnDragEnd = (e) => {

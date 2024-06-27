@@ -35,6 +35,7 @@ const workerScripts = {
   closestneigbor: new URL('../../../calc/closestneigbor', import.meta.url),
   lookahead: new URL('../../../calc/lookahead', import.meta.url)
 };
+
 export const Sidebar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [length, setLength] = useState(-1);
