@@ -48,14 +48,10 @@ export const lookAheadSolve = (robotPosition, destinationPositions, lookahead = 
       paths = expandedPaths;
     }
 
-    console.log('paths 1', paths);
-
     const pathLengths = paths.map((path) => calculatePathLength(path, lookupTable));
     const minLength = Math.min(...pathLengths);
     const minPathIndex = pathLengths.findIndex((value) => value === minLength);
     const shortestPath = paths[minPathIndex];
-
-    console.log('paths 2', paths);
 
     if (shortestPath.length === destinationPositions.length + 1) {
       if (indexOrder.length === 1) { // Meaning nothing has been pushed yet
@@ -69,8 +65,6 @@ export const lookAheadSolve = (robotPosition, destinationPositions, lookahead = 
 
     indexOrder.push(shortestPath[indexOrder.length]);
   }
-
-  console.log('paths 3', indexOrder);
 
   const positions = indexOrder.slice(1).map((index) => destinationPositions.find((pos) => pos.index === index));
   return { coords: [robotPosition, ...positions], length: calculatePathLength(indexOrder, lookupTable) };

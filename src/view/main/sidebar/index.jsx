@@ -41,42 +41,42 @@ export const Sidebar = () => {
   const [length, setLength] = useState(-1);
   const [execTime, setExecTime] = useState(null);
   const [worker, setWorker] = useState(null);
-  
+
   const spreadRef = useRef();
   const lookaheadRef = useRef();
-  
+
   const executeWorker = (workerType, params = {}) => {
     const startTime = Date.now();
-  
+
     if (worker !== null) {
       worker.terminate();
     }
-  
+
     const newWorker = new Worker(workerScripts[workerType], { type: 'module' });
-  
+
     newWorker.postMessage({
       robotPosition: robotPosition.value,
       destinationPositions: destinationPosition.value,
       ...params
     });
-  
+
     newWorker.onmessage = (e) => {
       const result = e.data;
       if (!result) return;
-  
+
       setExecTime((Date.now() - startTime) / 1000);
       path.value = result.coords;
       setLength(result.length);
       setWorker(null);
       setIsLoading(false);
     };
-  
+
     newWorker.onerror = (e) => {
       console.error(e.message);
       setWorker(null);
       setIsLoading(false);
     }
-  
+
     setWorker(newWorker);
     setIsLoading(true);
   };
@@ -149,16 +149,10 @@ export const Sidebar = () => {
 
         <button
           className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-          onClick={() => executeWorker(
-            'lookahead',
-            worker,
-            setWorker,
-            setLength,
-            setExecTime,
-            {
-              lookahead: lookaheadRef.current.value,
-              spread: spreadRef.current.value
-            })}
+          onClick={() => executeWorker('lookahead', {
+            lookahead: lookaheadRef.current.value,
+            spread: spreadRef.current.value
+          })}
         >
           Solve!
         </button>
