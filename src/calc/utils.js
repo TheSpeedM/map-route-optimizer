@@ -1,3 +1,13 @@
+export const getMinimumValue = (valueList) => {
+  let minValue = Infinity;
+
+  valueList.forEach((value) => {
+    if (value < minValue) minValue = value;
+  })
+
+  return minValue;
+}
+
 export const calculateDistance = (a, b) => {
   return Math.sqrt(
     Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2)
@@ -47,7 +57,7 @@ export const getClosest = (startIndex, lookupTable, excludeIndexes = []) => {
   if (filteredTable.length === 0) return null;
 
   const distances = filteredTable.map((item) => item[2]);
-  const minDistance = Math.min(...distances);
+  const minDistance = getMinimumValue(distances);
 
   const lookupTableItem = filteredTable.find((item) => item[2] === minDistance);
   const nextItem = lookupTableItem.find((i) => i.index !== startIndex)

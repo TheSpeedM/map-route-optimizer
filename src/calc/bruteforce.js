@@ -1,4 +1,4 @@
-import { calculateLengths, calculatePathLength } from "./utils";
+import { getMinimumValue, calculateLengths, calculatePathLength } from "./utils";
 
 const getPermutations = (array) => {
   const results = [];
@@ -27,8 +27,8 @@ export const bruteforceSolve = (robotPosition, destinationPositions) => {
   const paths = getPermutations(indexes);
 
   const totalLengths = paths.map((path) => calculatePathLength([-1, ...path], lookupTable));
-  const minLength = Math.min(...totalLengths)
-  const shortestPath = paths[totalLengths.indexOf(minLength)]
+  const minLength = getMinimumValue(totalLengths);
+  const shortestPath = paths[totalLengths.indexOf(minLength)];
 
   const positions = shortestPath.map((index) => destinationPositions.find((pos) => pos.index === index));
 

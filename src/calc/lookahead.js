@@ -1,4 +1,4 @@
-import { calculateLengths, calculatePathLength, getClosest } from "./utils";
+import { getMinimumValue, calculateLengths, calculatePathLength, getClosest } from "./utils";
 
 const LOOKAHEAD = 3;
 const SPREAD = 3;
@@ -49,7 +49,7 @@ export const lookAheadSolve = (robotPosition, destinationPositions, lookahead = 
     }
 
     const pathLengths = paths.map((path) => calculatePathLength(path, lookupTable));
-    const minLength = Math.min(...pathLengths);
+    const minLength = getMinimumValue(pathLengths);
     const minPathIndex = pathLengths.findIndex((value) => value === minLength);
     const shortestPath = paths[minPathIndex];
 
