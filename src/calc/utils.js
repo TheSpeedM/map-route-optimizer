@@ -33,5 +33,25 @@ export const calculatePathLength = (indexOrder, lookupTable) => {
   return cumulativeLength;
 }
 
+export const getClosest = (startIndex, lookupTable, excludeIndexes = []) => {
+  // Filter lookupTable to include only arrays that have an object with index === startIndex
+  const hasStartIndex = lookupTable.filter((item) => (
+    item.some((coord) => coord.index === startIndex)
+  ));
 
-export default { calculateDistance, calculateLengths, calculatePathLength };
+  // Filter lookupTable to exclude arrays that have any object with index in excludeIndexes
+  const filteredTable = hasStartIndex.filter((innerArray) => (
+    !innerArray.some((coord) => excludeIndexes.includes(coord.index))
+  ));
+
+  if (filteredTable.length === 0) return null;
+
+  const distances = filteredTable.map((item) => item[2]);
+  const minDistance = Math.min(...distances);
+
+  const lookupTableItem = filteredTable.find((item) => item[2] === minDistance);
+  const nextItem = lookupTableItem.find((i) => i.index !== startIndex)
+  return nextItem.index;
+}
+
+export default { calculateDistance, calculateLengths, calculatePathLength, getClosest };

@@ -1,23 +1,4 @@
-import { calculateLengths, calculatePathLength } from "./utils";
-
-const getClosest = (startIndex, lookupTable, excludeIndexes = []) => {
-  // Filter lookupTable to include only arrays that have an object with index === startIndex
-  const hasStartIndex = lookupTable.filter((item) => (
-    item.some((coord) => coord.index === startIndex)
-  ));
-
-  // Filter lookupTable to exclude arrays that have any object with index in excludeIndexes
-  const filteredTable = hasStartIndex.filter((innerArray) => (
-    !innerArray.some((coord) => excludeIndexes.includes(coord.index))
-  ));
-
-  const distances = filteredTable.map((item) => item[2]);
-  const minDistance = Math.min(...distances);
-
-  const lookupTableItem = filteredTable.find((item) => item[2] === minDistance);
-  const nextItem = lookupTableItem.find((i) => i.index !== startIndex)
-  return nextItem.index;
-}
+import { calculateLengths, calculatePathLength, getClosest } from "./utils";
 
 export const closestNeighborSolve = (robotPosition, destinationPositions) => {
   const lookupTable = calculateLengths([{ ...robotPosition, index: -1 }, ...destinationPositions]);
