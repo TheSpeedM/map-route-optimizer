@@ -37,6 +37,7 @@ export const lookAheadSolve = (robotPosition, destinationPositions, lookahead = 
   const lookupTable = calculateLengths([{ ...robotPosition, index: -1 }, ...destinationPositions]);
 
   const indexOrder = [-1]
+  let pathsSearched = 0;
 
   while (indexOrder.length !== destinationPositions.length) {
     let paths = [indexOrder];
@@ -47,6 +48,9 @@ export const lookAheadSolve = (robotPosition, destinationPositions, lookahead = 
 
       paths = expandedPaths;
     }
+
+    pathsSearched += paths.length;
+    console.log(pathsSearched);
 
     const pathLengths = paths.map((path) => calculatePathLength(path, lookupTable));
     const minLength = getMinimumValue(pathLengths);
@@ -67,7 +71,11 @@ export const lookAheadSolve = (robotPosition, destinationPositions, lookahead = 
   }
 
   const positions = indexOrder.slice(1).map((index) => destinationPositions.find((pos) => pos.index === index));
-  return { coords: [robotPosition, ...positions], length: calculatePathLength(indexOrder, lookupTable) };
+  return {
+    coords: [robotPosition, ...positions],
+    length: calculatePathLength(indexOrder, lookupTable),
+    paths: pathsSearched
+  };
 }
 
 self.onmessage = (event) => {

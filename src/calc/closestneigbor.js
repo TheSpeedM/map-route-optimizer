@@ -15,7 +15,11 @@ export const closestNeighborSolve = (robotPosition, destinationPositions) => {
 
   const positions = indexOrder.slice(1).map((index) => destinationPositions.find((pos) => pos.index === index));
 
-  return { coords: [robotPosition, ...positions], length: calculatePathLength(indexOrder, lookupTable) };
+  return { 
+    coords: [robotPosition, ...positions], 
+    length: calculatePathLength(indexOrder, lookupTable),
+    paths: destinationPositions.length
+  };
 }
 
 self.onmessage = (event) => {

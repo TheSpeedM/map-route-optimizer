@@ -37,10 +37,13 @@ const workerScripts = {
 };
 
 export const Sidebar = () => {
+  const [worker, setWorker] = useState(null);
+
+  // Info
   const [isLoading, setIsLoading] = useState(false);
   const [length, setLength] = useState(-1);
   const [execTime, setExecTime] = useState(null);
-  const [worker, setWorker] = useState(null);
+  const [pathsSearched, setPathsSearched] = useState(null);
 
   const spreadRef = useRef();
   const lookaheadRef = useRef();
@@ -66,7 +69,9 @@ export const Sidebar = () => {
 
       setExecTime((Date.now() - startTime) / 1000);
       path.value = result.coords;
+
       setLength(result.length);
+      setPathsSearched(result.paths);
       setWorker(null);
       setIsLoading(false);
     };
@@ -161,7 +166,9 @@ export const Sidebar = () => {
       <div className="flex flex-col py-3 mx-3">
         {isLoading && <p>Finding shortest path...</p>}
         {length > 0 && <p>Length: {Math.round(length)} px</p>}
-        {execTime !== null && <p>Time: {Math.round(execTime * 10) / 10} s</p>}
+        {pathsSearched !== null && execTime !== null && <p>
+          Searched {pathsSearched} paths in {Math.round(execTime * 10) / 10} s
+          </p>}
       </div>
     </div>
   );

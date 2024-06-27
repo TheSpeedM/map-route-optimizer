@@ -32,7 +32,11 @@ export const bruteforceSolve = (robotPosition, destinationPositions) => {
 
   const positions = shortestPath.map((index) => destinationPositions.find((pos) => pos.index === index));
 
-  return { coords: [robotPosition, ...positions], length: minLength };
+  return { 
+    coords: [robotPosition, ...positions], 
+    length: minLength,
+    paths: paths.length
+  };
 }
 
 self.onmessage = (event) => {
