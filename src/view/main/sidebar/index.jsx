@@ -13,18 +13,21 @@ const addDestination = () => {
     y: Math.round(Math.random() * ((mapSize.value.height - 200) / blocksize)) * blocksize + 100,
     index: destinations.value.length
   }];
+  path.value = [];
 };
 
 const removeDestination = () => {
   if (destinations.value.length > 0) {
     destinations.value = destinations.value.slice(0, -1);
     destinationPosition.value = destinationPosition.value.slice(0, -1);
+    path.value = [];
   }
 };
 
 const clearDestinations = () => {
   destinations.value = [];
   destinationPosition.value = [];
+  path.value = [];
 };
 
 const workerScripts = {
