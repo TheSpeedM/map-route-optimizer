@@ -6,16 +6,27 @@ const INITIAL_VALUES = {
   height: 50
 };
 
-const addDestination = () => {
-  destinations.value = [...destinations.value, {
-    ...INITIAL_VALUES,
-    x: Math.round(Math.random() * ((mapSize.value.width - 200) / blocksize)) * blocksize + 100,
-    y: Math.round(Math.random() * ((mapSize.value.height - 200) / blocksize)) * blocksize + 100,
-    index: destinations.value.length
-  }];
-  path.value = [];
+const generateDestination = () => ({
+  ...INITIAL_VALUES,
+  x: Math.round(Math.random() * ((mapSize.value.width - 200) / blocksize)) * blocksize + 100,
+  y: Math.round(Math.random() * ((mapSize.value.height - 200) / blocksize)) * blocksize + 100,
+  index: destinations.value.length
+})
+
+const isDestinationUnique = (newDestination) => {
+  return !destinations.value.some(dest => dest.x === newDestination.x && dest.y === newDestination.y);
 };
 
+const addDestination = () => {
+  let newDestination = generateDestination();
+
+  if (!isDestinationUnique(newDestination)) {
+    newDestination = generateDestination();
+  }
+
+  destinations.value = [...destinations.value, newDestination];
+  path.value = [];
+};
 const removeDestination = () => {
   if (destinations.value.length > 0) {
     destinations.value = destinations.value.slice(0, -1);
@@ -93,116 +104,119 @@ export const Sidebar = () => {
 
   return (
     <div>
-
-      <div className="flex flex-col h-screen bg-gray-300 divide-y divide-gray-400 overflow-x-scroll overflow-y-scroll">
-        <div className="py-3 px-3 sticky top-0 bg-inherit drop-shadow-md">
-          <h1 className="text-xl font-bold ">Map Route Optimizer</h1>
-          <h2 className="font-light">TSP playground</h2>
-        </div>
-
-        <div className="flex flex-col py-3 mx-3 text-sm font-mono">
-          <p>{isLoading ? 'Finding shortest path...' : 'Waiting on user input...'}</p>
-          <p>Length: {length > 0 ? Math.round(length) : '...'} px</p>
-          <p>Searched {pathsSearched !== null ? pathsSearched : '...'} paths in {execTime !== null ? `${Math.round(execTime * 10) / 10} s` : '...'}</p>
-        </div>
-
-        <div className="flex flex-col py-3 mx-3 gap-1">
-          <h3 className="font-semibold">Destinations</h3>
-          <button
-            className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-            onClick={addDestination}
-          >
-            Add a destination
-          </button>
-          <button
-            className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-            onClick={removeDestination}
-          >
-            Remove last destination
-          </button>
-          <button
-            className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-            onClick={clearDestinations}
-          >
-            Clear all destinations
-          </button>
-        </div>
-        <div className="flex flex-col py-3 mx-3 gap-1">
-          <h3 className="font-semibold">Simple algorithms</h3>
-          <button
-            className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-            onClick={() => executeWorker('bruteforce', worker, setWorker, setLength, setExecTime)}
-          >
-            Bruteforce (very slow)
-          </button>
-          <button
-            className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-            onClick={() => executeWorker('closestneigbor', worker, setWorker, setLength, setExecTime)}
-          >
-            Closest neighbor
-          </button>
-          <button
-            className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-            onClick={() => executeWorker('furthestneigbor', worker, setWorker, setLength, setExecTime)}
-          >
-            Furthest neighbor
-          </button>
-        </div>
-
-        <div className="flex flex-col py-3 mx-3 gap-2">
-          <h3 className="font-semibold">Optimistic bruteforce</h3>
-          <div className="flex text-sm gap-3">
-            <p>Spread</p>
-            <input
-              ref={bruteSpreadRef}
-              className="bg-gray-100 rounded-lg p-2 text-sm"
-              type="number"
-              defaultValue={3}
-            />
+      <div className="flex flex-col h-screen bg-gray-300 box-shadow-xl">
+        <div className="bg-inherit divide-y divide-gray-400 border-b border-gray-400">
+          <div className="py-3 px-3">
+            <h1 className="text-xl font-bold ">Map Route Optimizer</h1>
+            <a className="font-light underline decoration-blue-500" href="https://github.com/TheSpeedM/map-route-optimizer" target="_blank">TSP playground by Matth</a>
           </div>
 
-          <button
-            className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-            onClick={() => executeWorker('lookahead', {
-              lookahead: Infinity,
-              spread: bruteSpreadRef.current.value
-            })}
-          >
-            Solve!
-          </button>
+          <div className="flex flex-col py-3 mx-3 text-sm font-mono">
+            <p>{isLoading ? 'Finding shortest path...' : 'Waiting on user input...'}</p>
+            <p>Length: {length > 0 ? Math.round(length) : '...'} px</p>
+            <p>Searched {pathsSearched !== null ? pathsSearched : '...'} paths in {execTime !== null ? `${Math.round(execTime * 10) / 10} s` : '...'}</p>
+          </div>
         </div>
 
-        <div className="flex flex-col py-3 mx-3 gap-2">
-          <h3 className="font-semibold">Custom algorithm</h3>
-          <div className="flex text-sm gap-3">
-            <p>Spread</p>
-            <input
-              ref={spreadRef}
-              className="bg-gray-100 rounded-lg p-2 text-sm"
-              type="number"
-              defaultValue={3}
-            />
+        <div className=" bg-inherit divide-y divide-gray-400 overflow-x-scroll">
+          <div className="flex flex-col py-3 mx-3 gap-1">
+            <h3 className="font-semibold">Destinations</h3>
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={addDestination}
+            >
+              Add a destination
+            </button>
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={removeDestination}
+            >
+              Remove last destination
+            </button>
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={clearDestinations}
+            >
+              Clear all destinations
+            </button>
+          </div>
+          <div className="flex flex-col py-3 mx-3 gap-1">
+            <h3 className="font-semibold">Simple algorithms</h3>
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={() => executeWorker('bruteforce', worker, setWorker, setLength, setExecTime)}
+            >
+              Bruteforce
+            </button>
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={() => executeWorker('closestneigbor', worker, setWorker, setLength, setExecTime)}
+            >
+              Closest neighbor
+            </button>
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={() => executeWorker('furthestneigbor', worker, setWorker, setLength, setExecTime)}
+            >
+              Furthest neighbor
+            </button>
           </div>
 
-          <div className="flex text-sm gap-3">
-            <p>Look ahead</p>
-            <input
-              ref={lookaheadRef}
-              className="bg-gray-100 rounded-lg p-2"
-              type="number"
-              defaultValue={3}
-            />
+          <div className="flex flex-col py-3 mx-3 gap-2">
+            <h3 className="font-semibold">Optimistic bruteforce</h3>
+            <div className="flex text-sm gap-3">
+              <p>Spread</p>
+              <input
+                ref={bruteSpreadRef}
+                className="bg-gray-100 rounded-lg p-2 text-sm"
+                type="number"
+                defaultValue={3}
+              />
+            </div>
+
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={() => executeWorker('lookahead', {
+                lookahead: Infinity,
+                spread: bruteSpreadRef.current.value
+              })}
+            >
+              Solve!
+            </button>
           </div>
 
-          <button
-            className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
-            onClick={() => executeWorker('lookahead', {
-              lookahead: lookaheadRef.current.value,
-              spread: spreadRef.current.value
-            })}
-          >
-            Solve!
-          </button>
+          <div className="flex flex-col py-3 mx-3 gap-2">
+            <h3 className="font-semibold">Custom algorithm</h3>
+            <div className="flex text-sm gap-3">
+              <p>Spread</p>
+              <input
+                ref={spreadRef}
+                className="bg-gray-100 rounded-lg p-2 text-sm"
+                type="number"
+                defaultValue={3}
+              />
+            </div>
+
+            <div className="flex text-sm gap-3">
+              <p>Look ahead</p>
+              <input
+                ref={lookaheadRef}
+                className="bg-gray-100 rounded-lg p-2"
+                type="number"
+                defaultValue={3}
+              />
+            </div>
+
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={() => executeWorker('lookahead', {
+                lookahead: lookaheadRef.current.value,
+                spread: spreadRef.current.value
+              })}
+            >
+              Solve!
+            </button>
+          </div>
         </div>
       </div>
     </div>
