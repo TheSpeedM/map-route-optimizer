@@ -50,7 +50,6 @@ export const lookAheadSolve = (robotPosition, destinationPositions, lookahead = 
     }
 
     pathsSearched += paths.length;
-    console.log(pathsSearched);
 
     const pathLengths = paths.map((path) => calculatePathLength(path, lookupTable));
     const minLength = getMinimumValue(pathLengths);

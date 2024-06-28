@@ -1,10 +1,11 @@
 import { calculateLengths, calculatePathLength, getClosest } from "./utils";
 
 export const closestNeighborSolve = (robotPosition, destinationPositions) => {
-  const lookupTable = calculateLengths([{ ...robotPosition, index: -1 }, ...destinationPositions]);
-  const indexOrder = [-1];
+  const newRobotPosition = robotPosition?.index ? robotPosition : {...robotPosition, index: -1}
+  const lookupTable = calculateLengths([newRobotPosition, ...destinationPositions]);
+  const indexOrder = [newRobotPosition.index];
 
-  indexOrder.push(getClosest(-1, lookupTable));
+  indexOrder.push(getClosest(indexOrder.at(0), lookupTable));
 
   while (indexOrder.length !== destinationPositions.length + 1) {
     const startIndex = indexOrder.at(-1);
@@ -16,7 +17,7 @@ export const closestNeighborSolve = (robotPosition, destinationPositions) => {
   const positions = indexOrder.slice(1).map((index) => destinationPositions.find((pos) => pos.index === index));
 
   return { 
-    coords: [robotPosition, ...positions], 
+    coords: [newRobotPosition, ...positions], 
     length: calculatePathLength(indexOrder, lookupTable),
     paths: destinationPositions.length
   };
