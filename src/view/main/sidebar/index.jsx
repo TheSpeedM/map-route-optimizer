@@ -45,6 +45,7 @@ const workerScripts = {
   bruteforce: new URL('../../../calc/bruteforce', import.meta.url),
   closestneigbor: new URL('../../../calc/closestneigbor', import.meta.url),
   furthestneigbor: new URL('../../../calc/furthestneigbor', import.meta.url),
+  fromstart: new URL('../../../calc/fromstart', import.meta.url),
   lookahead: new URL('../../../calc/lookahead', import.meta.url)
 };
 
@@ -160,6 +161,12 @@ export const Sidebar = () => {
             >
               Furthest neighbor
             </button>
+            <button
+              className="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2"
+              onClick={() => executeWorker('fromstart', worker, setWorker, setLength, setExecTime)}
+            >
+              Closest from start
+            </button>
           </div>
 
           <div className="flex flex-col py-3 mx-3 gap-2">
@@ -186,7 +193,7 @@ export const Sidebar = () => {
           </div>
 
           <div className="flex flex-col py-3 mx-3 gap-2">
-            <h3 className="font-semibold">Custom algorithm</h3>
+            <h3 className="font-semibold">Limited lookahead</h3>
             <div className="flex text-sm gap-3">
               <p>Spread</p>
               <input

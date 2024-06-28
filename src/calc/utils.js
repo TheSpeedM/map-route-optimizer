@@ -64,4 +64,16 @@ export const getClosest = (startIndex, lookupTable, excludeIndexes = []) => {
   return nextItem.index;
 }
 
-export default { calculateDistance, calculateLengths, calculatePathLength, getClosest };
+export const findMultipleClosest = (startIndex, amount, lookupTable, excludeIndexes = []) => {
+  const closestValues = [];
+  while (closestValues.length < amount) {
+    const closestValue = getClosest(startIndex, lookupTable, [...excludeIndexes, ...closestValues])
+
+    if (closestValue === null) break;
+    closestValues.push(closestValue);
+  }
+
+  return closestValues;
+}
+
+export default { calculateDistance, calculateLengths, calculatePathLength, getClosest, findMultipleClosest };

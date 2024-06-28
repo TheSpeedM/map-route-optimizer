@@ -19,7 +19,7 @@ export const closestNeighborSolve = (robotPosition, destinationPositions) => {
   return { 
     coords: [newRobotPosition, ...positions], 
     length: calculatePathLength(indexOrder, lookupTable),
-    paths: destinationPositions.length
+    paths: 1
   };
 }
 

@@ -1,19 +1,7 @@
-import { getMinimumValue, calculateLengths, calculatePathLength, getClosest } from "./utils";
+import { getMinimumValue, calculateLengths, calculatePathLength, findMultipleClosest } from "./utils";
 
 const LOOKAHEAD = 3;
 const SPREAD = 3;
-
-const findMultipleClosest = (startIndex, amount, lookupTable, excludeIndexes = []) => {
-  const closestValues = [];
-  while (closestValues.length < amount) {
-    const closestValue = getClosest(startIndex, lookupTable, [...excludeIndexes, ...closestValues])
-
-    if (closestValue === null) break;
-    closestValues.push(closestValue);
-  }
-
-  return closestValues;
-}
 
 const expandPaths = (paths, spread, lookupTable) => {
   const newPaths = [];
