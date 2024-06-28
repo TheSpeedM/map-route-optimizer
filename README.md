@@ -1,8 +1,17 @@
-# React + Vite
+# Map Route Optimizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A playground for the traveling salesman problem made with React and Konva.
 
-Currently, two official plugins are available:
+## Implemented algorithms
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A brief summary of implemented algorithms:
+- Brute force search: searches every possible combination for the shortest path.
+- Closest neighbor search: looks for the closest node and picks that one.
+- Furthest neighbor search: does a closest neighbor search and then does a closest neighbor search starting from the furthest node.
+- Closest from start search: orders nodes only based on their distance from start.
+
+- Optimistic brute force search: does a bruteforce search for the full path with limited spread per node.
+- Limited lookahead search: looks a certain amound of nodes ahead, with a limited spread, and picks the shortest path.
+
+## Run instructions
+This project uses Bun. The development server can be started by running `bun install` and `bun run dev`.
