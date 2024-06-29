@@ -48,7 +48,8 @@ const workerScripts = {
   closestneigbor: new URL('../../../calc/closestneigbor', import.meta.url),
   furthestneigbor: new URL('../../../calc/furthestneigbor', import.meta.url),
   fromstart: new URL('../../../calc/fromstart', import.meta.url),
-  lookahead: new URL('../../../calc/lookahead', import.meta.url)
+  lookahead: new URL('../../../calc/lookahead', import.meta.url),
+  randomguesses: new URL('../../../calc/randomguesses', import.meta.url)
 };
 
 export const Sidebar = () => {
@@ -125,8 +126,8 @@ export const Sidebar = () => {
           <ButtonGroup
             title={'Destinations'}
             buttons={[
-              { title: 'Add a destination', onClick: addDestination },
-              { title: 'Remove last destination', onClick: removeDestination },
+              { title: 'Add destination', onClick: addDestination },
+              { title: 'Remove destination', onClick: removeDestination },
               { title: 'Clear all destinations', onClick: clearDestinations }
             ]}
           />
@@ -151,6 +152,13 @@ export const Sidebar = () => {
             title={'Limited lookahead'}
             inputs={[{ title: 'Spread' }, { title: 'Look ahead' }]}
             onClick={(params) => executeWorker('lookahead', { spread: params[0].value, lookahead: params[1].value })}
+            startCollapsed
+          />
+
+          <AlgorithmWithInputs
+            title={'Random guesses'}
+            inputs={[{ title: 'Guesses', default: 100 }]}
+            onClick={(params) => executeWorker('randomguesses', { guesses: params[0].value })}
             startCollapsed
           />
         </div>
