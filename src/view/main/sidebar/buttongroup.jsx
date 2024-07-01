@@ -57,12 +57,12 @@ export const AlgorithmWithInputs = ({ title, inputs, onClick, startCollapsed = f
         {inputs.map((input, index) => (
           <div className="flex justify-between text-sm items-center" key={index}>
             <p>{input.title}</p>
-              <input
-                ref={ir => inputsRef.current[index] = ir}
-                className="bg-gray-100 rounded-lg p-2 text-sm w-1/2"
-                type="number"
-                defaultValue={input?.default || 3}
-              />
+            <input
+              ref={ir => inputsRef.current[index] = ir}
+              className="bg-gray-100 rounded-lg p-2 text-sm w-1/2"
+              type="number"
+              defaultValue={input?.default ?? 3}
+            />
           </div>
         ))}
 

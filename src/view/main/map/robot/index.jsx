@@ -20,15 +20,15 @@ export const Robot = ({ initalValues, mapSize }) => {
     robotPosition.value = {x: newX, y: newY}
   };
 
-  useEffect(() => {robotPosition.value = {x: initalValues?.x || 100, y: initalValues?.y || 100}}, [])
+  useEffect(() => {robotPosition.value = {x: initalValues?.x ?? 100, y: initalValues?.y ?? 100}}, [])
 
   return (
     <>
       <Rect
-      x={rect?.x || 100}
-      y={rect?.y || 100}
-      width={initalValues?.width || 50}
-      height={initalValues?.height || 50}
+      x={rect?.x ?? 100}
+      y={rect?.y ?? 100}
+      width={initalValues?.width ?? 50}
+      height={initalValues?.height ?? 50}
       fill={'pink'}
       draggable={true}
       onDragStart={handleOnDragStart}

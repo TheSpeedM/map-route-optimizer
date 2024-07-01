@@ -45,22 +45,22 @@ export const Destination = ({ initialValues, draggable, blocksize, mapSize }) =>
     updateSignalPos(newPos)
   };
 
-  useEffect(() => updateSignalPos({ x: initialValues?.x || 100, y: initialValues?.y || 100 }), [])
+  useEffect(() => updateSignalPos({ x: initialValues?.x ?? 100, y: initialValues?.y ?? 100 }), [])
 
   return (
     <>
       {circle.isDragging && draggable && <Circle
-        x={shadowCircle?.x || 50}
-        y={shadowCircle?.y || 50}
-        width={initialValues?.width || 100}
-        height={initialValues?.height || 100}
+        x={shadowCircle?.x ?? 50}
+        y={shadowCircle?.y ?? 50}
+        width={initialValues?.width ?? 100}
+        height={initialValues?.height ?? 100}
         fill={'lightblue'}
         opacity={0.5}
       />}
 
       <Group
-        x={circle?.x || 100}
-        y={circle?.y || 100}
+        x={circle?.x ?? 100}
+        y={circle?.y ?? 100}
         draggable={draggable}
         onDragStart={handleOnDragStart}
         onDragMove={handleOnDragMove}
@@ -70,8 +70,8 @@ export const Destination = ({ initialValues, draggable, blocksize, mapSize }) =>
         key={circle?.uniqueKey} // This is to ensure rerender
       >
         <Circle
-          width={initialValues?.width || 50}
-          height={initialValues?.height || 50}
+          width={initialValues?.width ?? 50}
+          height={initialValues?.height ?? 50}
           fill={'lightblue'}
         />
 
