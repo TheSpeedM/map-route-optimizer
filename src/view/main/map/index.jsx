@@ -1,18 +1,20 @@
-import { Stage, Layer } from 'react-konva';
-import { useRef, useEffect, useState } from 'react';
-import { effect } from '@preact/signals-react';
+import { Stage, Layer } from "react-konva";
+import { useRef, useEffect, useState } from "react";
+import { effect } from "@preact/signals-react";
 
-import { blocksize, mapSize, destinations } from '../signals';
+import { blocksize, mapSize, destinations } from "../signals";
 
-import { Robot } from './robot';
-import { Destination } from './destination';
-import { Path } from './path';
+import { Robot } from "./robot";
+import { Destination } from "./destination";
+import { Path } from "./path";
 
 export const Map = () => {
   const mapRef = useRef();
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [destinationList, setDestinationList] = useState([...destinations.value]);
+  const [destinationList, setDestinationList] = useState([
+    ...destinations.value,
+  ]);
 
   // Trigger on load and unload of component
   useEffect(() => {
@@ -21,7 +23,7 @@ export const Map = () => {
         const mapObj = {
           width: mapRef.current.clientWidth,
           height: mapRef.current.clientHeight,
-        }
+        };
 
         setDimensions(mapObj);
         mapSize.value = mapObj;
@@ -31,8 +33,8 @@ export const Map = () => {
     effect(() => setDestinationList(destinations.value));
     updateSize();
 
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
   }, []);
 
   return (
@@ -49,9 +51,7 @@ export const Map = () => {
                 mapSize={{ x: dimensions.width, y: dimensions.height }}
               />
             ))}
-            <Robot
-              mapSize={{ x: dimensions.width, y: dimensions.height }}
-            />
+            <Robot mapSize={{ x: dimensions.width, y: dimensions.height }} />
             <Path />
           </Layer>
         </Stage>

@@ -1,5 +1,3 @@
 import MainView from "./main";
 
-export {
-  MainView
-}
+export { MainView };

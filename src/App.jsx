@@ -1,9 +1,7 @@
 import { MainView } from "./view";
 
 function App() {
-  return (
-    <MainView />
-  )
+  return <MainView />;
 }
 
-export default App
+export default App;
