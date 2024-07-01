@@ -38,7 +38,7 @@ export const Map = () => {
   }, []);
 
   return (
-    <div className="h-screen w-full bg-gray-100" ref={mapRef}>
+    <div className="flex-grow h-screen bg-gray-100" ref={mapRef}>
       {dimensions.width && dimensions.height && (
         <Stage width={dimensions.width} height={dimensions.height}>
           <Layer>

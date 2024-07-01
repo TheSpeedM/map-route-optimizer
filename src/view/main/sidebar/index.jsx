@@ -123,128 +123,126 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className="min-w-250">
-      <div className="flex flex-col h-screen bg-gray-300 box-shadow-xl">
-        <div className="bg-inherit divide-y divide-gray-400 border-b border-gray-400">
-          <div className="py-3 px-3">
-            <h1 className="text-xl font-bold ">Map Route Optimizer</h1>
-            <a
-              className="font-light underline decoration-blue-500"
-              href="https://github.com/TheSpeedM/map-route-optimizer"
-              target="_blank"
-            >
-              TSP playground by Matth
-            </a>
-          </div>
-
-          <div className="flex flex-col py-3 mx-3 text-sm font-mono leading-tight gap-1">
-            <p>
-              {isLoading
-                ? "Finding shortest path..."
-                : "Waiting on user input..."}
-            </p>
-            <p>Length: {length > 0 ? Math.round(length) : "..."} px</p>
-            <p>
-              Searched {pathsSearched !== null ? pathsSearched : "0"} paths{" "}
-              {execTime !== null
-                ? `in ${Math.round(execTime * 10) / 10} seconds`
-                : ""}
-            </p>
-          </div>
+    <div className="flex flex-col h-screen bg-gray-300 box-shadow-xl">
+      <div className="bg-inherit divide-y divide-gray-400 border-b border-gray-400">
+        <div className="py-3 px-3">
+          <h1 className="text-xl font-bold ">Map Route Optimizer</h1>
+          <a
+            className="font-light underline decoration-blue-500"
+            href="https://github.com/TheSpeedM/map-route-optimizer"
+            target="_blank"
+          >
+            TSP playground by Matth
+          </a>
         </div>
 
-        <div className=" bg-inherit divide-y divide-gray-400 overflow-x-scroll">
-          <ButtonGroup
-            title={"Destinations"}
-            buttons={[
-              { title: "Add destination", onClick: addDestination },
-              { title: "Remove destination", onClick: removeDestination },
-              { title: "Clear all destinations", onClick: clearDestinations },
-            ]}
-          />
-          <ButtonGroup
-            title={"Simple algorithms"}
-            buttons={[
-              {
-                title: "Bruteforce",
-                onClick: () =>
-                  executeWorker(
-                    "bruteforce",
-                    worker,
-                    setWorker,
-                    setLength,
-                    setExecTime
-                  ),
-              },
-              {
-                title: "Closest neighbor",
-                onClick: () =>
-                  executeWorker(
-                    "closestneigbor",
-                    worker,
-                    setWorker,
-                    setLength,
-                    setExecTime
-                  ),
-              },
-              {
-                title: "Furthest neighbor",
-                onClick: () =>
-                  executeWorker(
-                    "furthestneigbor",
-                    worker,
-                    setWorker,
-                    setLength,
-                    setExecTime
-                  ),
-              },
-              {
-                title: "Closest from start",
-                onClick: () =>
-                  executeWorker(
-                    "fromstart",
-                    worker,
-                    setWorker,
-                    setLength,
-                    setExecTime
-                  ),
-              },
-            ]}
-          />
-
-          <AlgorithmWithInputs
-            title={"Optimistic bruteforce"}
-            inputs={[{ title: "Spread" }]}
-            onClick={(params) =>
-              executeWorker("lookahead", {
-                spread: params[0].value,
-                lookahead: Infinity,
-              })
-            }
-            startCollapsed
-          />
-
-          <AlgorithmWithInputs
-            title={"Limited lookahead"}
-            inputs={[{ title: "Spread" }, { title: "Look ahead" }]}
-            onClick={(params) =>
-              executeWorker("lookahead", {
-                spread: params[0].value,
-                lookahead: params[1].value,
-              })
-            }
-            startCollapsed
-          />
-
-          <AlgorithmWithInputs
-            title={"Random guesses"}
-            inputs={[{ title: "Guesses", default: 100 }]}
-            onClick={(params) =>
-              executeWorker("randomguesses", { guesses: params[0].value })
-            }
-            startCollapsed
-          />
+        <div className="flex flex-col py-3 mx-3 text-sm font-mono leading-tight gap-1">
+          <p>
+            {isLoading
+              ? "Finding shortest path..."
+              : "Waiting on user input..."}
+          </p>
+          <p>Length: {length > 0 ? Math.round(length) : "..."} px</p>
+          <p>
+            Searched {pathsSearched !== null ? pathsSearched : "0"} paths{" "}
+            {execTime !== null
+              ? `in ${Math.round(execTime * 10) / 10} seconds`
+              : ""}
+          </p>
         </div>
+      </div>
+
+      <div className=" bg-inherit divide-y divide-gray-400 overflow-x-scroll">
+        <ButtonGroup
+          title={"Destinations"}
+          buttons={[
+            { title: "Add destination", onClick: addDestination },
+            { title: "Remove destination", onClick: removeDestination },
+            { title: "Clear all destinations", onClick: clearDestinations },
+          ]}
+        />
+        <ButtonGroup
+          title={"Simple algorithms"}
+          buttons={[
+            {
+              title: "Bruteforce",
+              onClick: () =>
+                executeWorker(
+                  "bruteforce",
+                  worker,
+                  setWorker,
+                  setLength,
+                  setExecTime
+                ),
+            },
+            {
+              title: "Closest neighbor",
+              onClick: () =>
+                executeWorker(
+                  "closestneigbor",
+                  worker,
+                  setWorker,
+                  setLength,
+                  setExecTime
+                ),
+            },
+            {
+              title: "Furthest neighbor",
+              onClick: () =>
+                executeWorker(
+                  "furthestneigbor",
+                  worker,
+                  setWorker,
+                  setLength,
+                  setExecTime
+                ),
+            },
+            {
+              title: "Closest from start",
+              onClick: () =>
+                executeWorker(
+                  "fromstart",
+                  worker,
+                  setWorker,
+                  setLength,
+                  setExecTime
+                ),
+            },
+          ]}
+        />
+
+        <AlgorithmWithInputs
+          title={"Optimistic bruteforce"}
+          inputs={[{ title: "Spread" }]}
+          onClick={(params) =>
+            executeWorker("lookahead", {
+              spread: params[0].value,
+              lookahead: Infinity,
+            })
+          }
+          startCollapsed
+        />
+
+        <AlgorithmWithInputs
+          title={"Limited lookahead"}
+          inputs={[{ title: "Spread" }, { title: "Look ahead" }]}
+          onClick={(params) =>
+            executeWorker("lookahead", {
+              spread: params[0].value,
+              lookahead: params[1].value,
+            })
+          }
+          startCollapsed
+        />
+
+        <AlgorithmWithInputs
+          title={"Random guesses"}
+          inputs={[{ title: "Guesses", default: 100 }]}
+          onClick={(params) =>
+            executeWorker("randomguesses", { guesses: params[0].value })
+          }
+          startCollapsed
+        />
       </div>
     </div>
   );

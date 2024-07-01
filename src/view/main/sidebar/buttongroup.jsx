@@ -11,22 +11,23 @@ export const ButtonGroup = ({ title, buttons, startCollapsed = false }) => {
 
   return (
     <div className="py-3 mx-3">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="font-semibold">{title}</h3>
-        <button className="text-gray-700" onClick={toggleCollapsed}>
-          {collapsed ? (
-            <Icon
-              icon={"solar:alt-arrow-down-outline"}
-              className="ml-2 w-6 h-6"
-            />
-          ) : (
-            <Icon
-              icon={"solar:alt-arrow-up-outline"}
-              className="ml-2 w-6 h-6"
-            />
-          )}
-        </button>
-      </div>
+      <button
+        className="flex justify-between items-center mb-2 w-full"
+        onClick={toggleCollapsed}
+      >
+        <h3 className="font-semibold text-left">{title}</h3>
+        {collapsed ? (
+          <Icon
+            icon={"solar:alt-arrow-down-outline"}
+            className="ml-2 w-6 h-6 text-gray-700"
+          />
+        ) : (
+          <Icon
+            icon={"solar:alt-arrow-up-outline"}
+            className="ml-2 w-6 h-6 text-gray-700"
+          />
+        )}
+      </button>
       {!collapsed && (
         <div className="flex flex-col gap-1">
           {buttons.map((button, index) => (
@@ -59,22 +60,23 @@ export const AlgorithmWithInputs = ({
 
   return (
     <div className="py-3 mx-3">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="font-semibold">{title}</h3>
-        <button className="text-gray-700" onClick={toggleCollapsed}>
-          {collapsed ? (
-            <Icon
-              icon={"solar:alt-arrow-down-outline"}
-              className="ml-2 w-6 h-6"
-            />
-          ) : (
-            <Icon
-              icon={"solar:alt-arrow-up-outline"}
-              className="ml-2 w-6 h-6"
-            />
-          )}
-        </button>
-      </div>
+      <button
+        className="flex justify-between items-center mb-2 w-full"
+        onClick={toggleCollapsed}
+      >
+        <h3 className="font-semibold text-left">{title}</h3>
+        {collapsed ? (
+          <Icon
+            icon={"solar:alt-arrow-down-outline"}
+            className="ml-2 w-6 h-6 text-gray-700"
+          />
+        ) : (
+          <Icon
+            icon={"solar:alt-arrow-up-outline"}
+            className="ml-2 w-6 h-6 text-gray-700"
+          />
+        )}
+      </button>
 
       {!collapsed && (
         <div className="flex flex-col gap-2">
