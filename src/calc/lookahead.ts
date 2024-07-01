@@ -54,7 +54,7 @@ export const lookAheadSolve = (
   const indexOrder = [-1];
   let pathsSearched = 0;
 
-  while (indexOrder.length !== destinationPositions.length) {
+  while (indexOrder.length !== destinationPositions.length + 1) {
     let paths = [indexOrder];
 
     for (let i = 0; i < lookahead; i++) {
