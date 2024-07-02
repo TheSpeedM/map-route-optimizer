@@ -104,10 +104,33 @@ export const findMultipleClosest = (
   return closestValues;
 };
 
+export const expandPaths = (paths: number[][], spread: number, lookupTable: any) => {
+  const newPaths: number[][] = [];
+
+  paths.forEach((path) => {
+    const startIndex = path.at(-1) ?? -1;
+    const excludeIndexes = path.slice(0, -1);
+
+    const closestNext = findMultipleClosest(
+      startIndex,
+      spread,
+      lookupTable,
+      excludeIndexes
+    );
+
+    closestNext.forEach((index: number) => {
+      newPaths.push([...path, index]);
+    });
+  });
+
+  return newPaths;
+};
+
 export default {
   calculateDistance,
   calculateLengths,
   calculatePathLength,
   getClosest,
   findMultipleClosest,
+  expandPaths,
 };

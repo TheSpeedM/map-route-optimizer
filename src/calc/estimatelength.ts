@@ -10,12 +10,54 @@ import {
   DestinationPosition,
   LookAheadWorkerMessage,
   AlgorithmReturnMessage,
+  NodeLength,
 } from "../utils/types";
 
 const LOOKAHEAD = 3;
 const SPREAD = 3;
 
-export const lookAheadSolve = (
+const estimatePathLength = (
+  indexOrder: number[],
+  lookupTable: NodeLength[]
+): number => {
+  const currentLength = calculatePathLength(indexOrder, lookupTable);
+
+  const allIndexes: Set<number> = new Set();
+
+  lookupTable.forEach((item) => {
+    allIndexes.add(item[0].index);
+    allIndexes.add(item[1].index);
+  });
+
+  if (indexOrder.length === allIndexes.size) return currentLength;
+
+  const allLengths = lookupTable.map((item) => item[2]);
+  const totalLength = allLengths.reduce((partialSum, a) => partialSum + a, 0);
+
+  const indexLenghts = lookupTable.map((item) =>
+    indexOrder.includes(item[0].index) && indexOrder.includes(item[1].index)
+      ? item[2]
+      : 0
+  );
+
+  const indexLength = indexLenghts.reduce((partialSum, a) => partialSum + a, 0);
+
+  const lengthEstimation = currentLength * (totalLength / indexLength);
+
+  // console.log(
+  //   Math.round(currentLength),
+  //   "* (",
+  //   Math.round(totalLength),
+  //   "/",
+  //   Math.round(indexLength),
+  //   ") =",
+  //   lengthEstimation
+  // );
+
+  return lengthEstimation;
+};
+
+export const estimateLengthSolve = (
   robotPosition: Position,
   destinationPositions: DestinationPosition[],
   lookahead = LOOKAHEAD,
@@ -45,7 +87,7 @@ export const lookAheadSolve = (
     pathsSearched += paths.length;
 
     const pathLengths = paths.map((path) =>
-      calculatePathLength(path, lookupTable)
+      estimatePathLength(path, lookupTable)
     );
 
     const minLength = getMinimumValue(pathLengths);
@@ -85,7 +127,7 @@ export const lookAheadSolve = (
 self.onmessage = (event: LookAheadWorkerMessage) => {
   const { robotPosition, destinationPositions, lookahead, spread } = event.data;
 
-  const result = lookAheadSolve(
+  const result = estimateLengthSolve(
     robotPosition,
     destinationPositions,
     lookahead,
@@ -95,4 +137,4 @@ self.onmessage = (event: LookAheadWorkerMessage) => {
   postMessage(result);
 };
 
-export default { lookAheadSolve };
+export default { estimateLengthSolve };

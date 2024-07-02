@@ -66,6 +66,7 @@ const workerScripts = {
   fromstart: new URL("../../../calc/fromstart", import.meta.url),
   lookahead: new URL("../../../calc/lookahead", import.meta.url),
   randomguesses: new URL("../../../calc/randomguesses", import.meta.url),
+  etimatelength: new URL("../../../calc/estimatelength", import.meta.url),
 };
 
 export const Sidebar = () => {
@@ -224,6 +225,15 @@ export const Sidebar = () => {
         />
 
         <AlgorithmWithInputs
+          title={"Random guesses"}
+          inputs={[{ title: "Guesses", default: 100 }]}
+          onClick={(params) =>
+            executeWorker("randomguesses", { guesses: params[0].value })
+          }
+          startCollapsed
+        />
+
+        <AlgorithmWithInputs
           title={"Limited lookahead"}
           inputs={[{ title: "Spread" }, { title: "Look ahead" }]}
           onClick={(params) =>
@@ -236,10 +246,13 @@ export const Sidebar = () => {
         />
 
         <AlgorithmWithInputs
-          title={"Random guesses"}
-          inputs={[{ title: "Guesses", default: 100 }]}
+          title={"Estimate length"}
+          inputs={[{ title: "Spread" }, { title: "Look ahead" }]}
           onClick={(params) =>
-            executeWorker("randomguesses", { guesses: params[0].value })
+            executeWorker("etimatelength", {
+              spread: params[0].value,
+              lookahead: params[1].value,
+            })
           }
           startCollapsed
         />

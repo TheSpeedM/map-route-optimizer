@@ -32,8 +32,8 @@ interface AlgorithmWorkerData {
 }
 
 interface LookAheadWorkerData extends AlgorithmWorkerData {
-  lookahead: number;
-  spread: number;
+  lookahead?: number;
+  spread?: number;
 }
 
 interface RandomGuessesWorkerData extends AlgorithmWorkerData {
