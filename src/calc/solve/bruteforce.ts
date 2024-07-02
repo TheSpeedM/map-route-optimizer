@@ -2,14 +2,14 @@ import {
   getMinimumValue,
   calculateLengths,
   calculatePathLength,
-} from "./utils";
+} from "../utils";
 
 import {
   Position,
   DestinationPosition,
-  AlgorithmWorkerMessage,
-  AlgorithmReturnMessage,
-} from "../utils/types";
+  SolverWorkerMessage,
+  SolverReturnMessage,
+} from "../../utils/types";
 
 const getPermutations = (array: number[]) => {
   const results: number[][] = [];
@@ -34,7 +34,7 @@ const getPermutations = (array: number[]) => {
 export const bruteforceSolve = (
   robotPosition: Position,
   destinationPositions: DestinationPosition[]
-): AlgorithmReturnMessage => {
+): SolverReturnMessage => {
   if (destinationPositions.length === 0)
     throw new Error("No destinations given");
 
@@ -68,7 +68,7 @@ export const bruteforceSolve = (
   };
 };
 
-self.onmessage = (event: AlgorithmWorkerMessage) => {
+self.onmessage = (event: SolverWorkerMessage) => {
   const { robotPosition, destinationPositions } = event.data;
   const result = bruteforceSolve(robotPosition, destinationPositions);
   postMessage(result);

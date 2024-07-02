@@ -3,66 +3,24 @@ import {
   calculateLengths,
   calculatePathLength,
   expandPaths,
-} from "./utils";
+} from "../utils";
 
 import {
   Position,
   DestinationPosition,
   LookAheadWorkerMessage,
-  AlgorithmReturnMessage,
-  NodeLength,
-} from "../utils/types";
+  SolverReturnMessage,
+} from "../../utils/types";
 
 const LOOKAHEAD = 3;
 const SPREAD = 3;
 
-const estimatePathLength = (
-  indexOrder: number[],
-  lookupTable: NodeLength[]
-): number => {
-  const currentLength = calculatePathLength(indexOrder, lookupTable);
-
-  const allIndexes: Set<number> = new Set();
-
-  lookupTable.forEach((item) => {
-    allIndexes.add(item[0].index);
-    allIndexes.add(item[1].index);
-  });
-
-  if (indexOrder.length === allIndexes.size) return currentLength;
-
-  const allLengths = lookupTable.map((item) => item[2]);
-  const totalLength = allLengths.reduce((partialSum, a) => partialSum + a, 0);
-
-  const indexLenghts = lookupTable.map((item) =>
-    indexOrder.includes(item[0].index) && indexOrder.includes(item[1].index)
-      ? item[2]
-      : 0
-  );
-
-  const indexLength = indexLenghts.reduce((partialSum, a) => partialSum + a, 0);
-
-  const lengthEstimation = currentLength * (totalLength / indexLength);
-
-  // console.log(
-  //   Math.round(currentLength),
-  //   "* (",
-  //   Math.round(totalLength),
-  //   "/",
-  //   Math.round(indexLength),
-  //   ") =",
-  //   lengthEstimation
-  // );
-
-  return lengthEstimation;
-};
-
-export const estimateLengthSolve = (
+export const lookAheadSolve = (
   robotPosition: Position,
   destinationPositions: DestinationPosition[],
   lookahead = LOOKAHEAD,
   spread = SPREAD
-): AlgorithmReturnMessage => {
+): SolverReturnMessage => {
   if (destinationPositions.length === 0)
     throw new Error("No destinations given");
 
@@ -87,7 +45,7 @@ export const estimateLengthSolve = (
     pathsSearched += paths.length;
 
     const pathLengths = paths.map((path) =>
-      estimatePathLength(path, lookupTable)
+      calculatePathLength(path, lookupTable)
     );
 
     const minLength = getMinimumValue(pathLengths);
@@ -127,7 +85,7 @@ export const estimateLengthSolve = (
 self.onmessage = (event: LookAheadWorkerMessage) => {
   const { robotPosition, destinationPositions, lookahead, spread } = event.data;
 
-  const result = estimateLengthSolve(
+  const result = lookAheadSolve(
     robotPosition,
     destinationPositions,
     lookahead,
@@ -137,4 +95,4 @@ self.onmessage = (event: LookAheadWorkerMessage) => {
   postMessage(result);
 };
 
-export default { estimateLengthSolve };
+export default { lookAheadSolve };

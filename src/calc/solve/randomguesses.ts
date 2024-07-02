@@ -1,11 +1,11 @@
-import { calculateLengths, calculatePathLength } from "./utils";
+import { calculateLengths, calculatePathLength } from "../utils";
 
 import {
   Position,
   DestinationPosition,
   RandomGuessesWorkerMessage,
-  AlgorithmReturnMessage,
-} from "../utils/types";
+  SolverReturnMessage,
+} from "../../utils/types";
 
 const GUESSES = 100;
 
@@ -33,7 +33,7 @@ export const randomGuessesSolve = (
   robotPosition: Position,
   destinationPositions: DestinationPosition[],
   guesses = GUESSES
-): AlgorithmReturnMessage => {
+): SolverReturnMessage => {
   if (destinationPositions.length === 0)
     throw new Error("No destinations given");
 

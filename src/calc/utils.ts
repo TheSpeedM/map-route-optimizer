@@ -104,7 +104,11 @@ export const findMultipleClosest = (
   return closestValues;
 };
 
-export const expandPaths = (paths: number[][], spread: number, lookupTable: any) => {
+export const expandPaths = (
+  paths: number[][],
+  spread: number,
+  lookupTable: any
+) => {
   const newPaths: number[][] = [];
 
   paths.forEach((path) => {

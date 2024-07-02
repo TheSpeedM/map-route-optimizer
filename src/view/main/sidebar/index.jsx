@@ -59,14 +59,11 @@ const clearDestinations = () => {
   path.value = [];
 };
 
-const workerScripts = {
-  bruteforce: new URL("../../../calc/bruteforce", import.meta.url),
-  closestneigbor: new URL("../../../calc/closestneigbor", import.meta.url),
-  furthestneigbor: new URL("../../../calc/furthestneigbor", import.meta.url),
-  fromstart: new URL("../../../calc/fromstart", import.meta.url),
-  lookahead: new URL("../../../calc/lookahead", import.meta.url),
-  randomguesses: new URL("../../../calc/randomguesses", import.meta.url),
-  etimatelength: new URL("../../../calc/estimatelength", import.meta.url),
+const baseSolveUrl = "../../../calc/solve/";
+const baseOptimizeUrl = "../../../calc/optimize/";
+
+const getScriptUrl = (baseUrl, name) => {
+  return new URL(`${baseUrl}${name}`, import.meta.url);
 };
 
 export const Sidebar = () => {
@@ -85,20 +82,18 @@ export const Sidebar = () => {
   const spreadRef = useRef();
   const lookaheadRef = useRef();
 
-  const executeWorker = (workerType, params = {}) => {
+  const executeWorker = (baseUrl, workerType, message) => {
     const startTime = Date.now();
 
     if (worker !== null) {
       worker.terminate();
     }
 
-    const newWorker = new Worker(workerScripts[workerType], { type: "module" });
-
-    newWorker.postMessage({
-      robotPosition: robotPosition.value,
-      destinationPositions: destinationPosition.value,
-      ...params,
+    const newWorker = new Worker(getScriptUrl(baseUrl, workerType), {
+      type: "module",
     });
+
+    newWorker.postMessage(message);
 
     newWorker.onmessage = (e) => {
       const result = e.data;
@@ -121,6 +116,26 @@ export const Sidebar = () => {
 
     setWorker(newWorker);
     setIsLoading(true);
+  };
+
+  const executeSolver = (workerType, params = {}) => {
+    executeWorker(
+      baseSolveUrl,
+      workerType,
+      {
+        robotPosition: robotPosition.value,
+        destinationPositions: destinationPosition.value,
+        ...params,
+      },
+      params
+    );
+  };
+
+  const executeOptimizer = (workerType, params = {}) => {
+    executeWorker(baseOptimizeUrl, workerType, {
+      coords: path.value,
+      ...params,
+    });
   };
 
   return (
@@ -167,47 +182,19 @@ export const Sidebar = () => {
           buttons={[
             {
               title: "Bruteforce",
-              onClick: () =>
-                executeWorker(
-                  "bruteforce",
-                  worker,
-                  setWorker,
-                  setLength,
-                  setExecTime
-                ),
+              onClick: () => executeSolver("bruteforce"),
             },
             {
               title: "Closest neighbor",
-              onClick: () =>
-                executeWorker(
-                  "closestneigbor",
-                  worker,
-                  setWorker,
-                  setLength,
-                  setExecTime
-                ),
+              onClick: () => executeSolver("closestneigbor"),
             },
             {
               title: "Furthest neighbor",
-              onClick: () =>
-                executeWorker(
-                  "furthestneigbor",
-                  worker,
-                  setWorker,
-                  setLength,
-                  setExecTime
-                ),
+              onClick: () => executeSolver("furthestneigbor"),
             },
             {
               title: "Closest from start",
-              onClick: () =>
-                executeWorker(
-                  "fromstart",
-                  worker,
-                  setWorker,
-                  setLength,
-                  setExecTime
-                ),
+              onClick: () => executeSolver("fromstart"),
             },
           ]}
         />
@@ -216,7 +203,7 @@ export const Sidebar = () => {
           title={"Optimistic bruteforce"}
           inputs={[{ title: "Spread" }]}
           onClick={(params) =>
-            executeWorker("lookahead", {
+            executeSolver("lookahead", {
               spread: params[0].value,
               lookahead: Infinity,
             })
@@ -228,7 +215,7 @@ export const Sidebar = () => {
           title={"Random guesses"}
           inputs={[{ title: "Guesses", default: 100 }]}
           onClick={(params) =>
-            executeWorker("randomguesses", { guesses: params[0].value })
+            executeSolver("randomguesses", { guesses: params[0].value })
           }
           startCollapsed
         />
@@ -237,7 +224,7 @@ export const Sidebar = () => {
           title={"Limited lookahead"}
           inputs={[{ title: "Spread" }, { title: "Look ahead" }]}
           onClick={(params) =>
-            executeWorker("lookahead", {
+            executeSolver("lookahead", {
               spread: params[0].value,
               lookahead: params[1].value,
             })
@@ -249,12 +236,22 @@ export const Sidebar = () => {
           title={"Estimate length"}
           inputs={[{ title: "Spread" }, { title: "Look ahead" }]}
           onClick={(params) =>
-            executeWorker("etimatelength", {
+            executeSolver("estimatelength", {
               spread: params[0].value,
               lookahead: params[1].value,
             })
           }
           startCollapsed
+        />
+
+        <ButtonGroup
+          title={"Optimizers"}
+          buttons={[
+            {
+              title: "Redo intersects",
+              onClick: () => executeOptimizer("redointersects"),
+            },
+          ]}
         />
       </div>
     </div>

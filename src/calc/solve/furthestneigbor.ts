@@ -3,14 +3,14 @@ import { closestNeighborSolve } from "./closestneigbor";
 import {
   Position,
   DestinationPosition,
-  AlgorithmWorkerMessage,
-  AlgorithmReturnMessage,
-} from "../utils/types";
+  SolverWorkerMessage,
+  SolverReturnMessage,
+} from "../../utils/types";
 
 export const furthestNeighborSolve = (
   robotPosition: Position,
   destinationPositions: DestinationPosition[]
-): AlgorithmReturnMessage => {
+): SolverReturnMessage => {
   if (destinationPositions.length === 0)
     throw new Error("No destinations given");
 
@@ -28,10 +28,10 @@ export const furthestNeighborSolve = (
     closestResult.coords.slice(0, -1) as DestinationPosition[]
   );
 
-  return reverseResult;
+  return { ...reverseResult, paths: 2 };
 };
 
-self.onmessage = (event: AlgorithmWorkerMessage) => {
+self.onmessage = (event: SolverWorkerMessage) => {
   const { robotPosition, destinationPositions } = event.data;
   const result = furthestNeighborSolve(robotPosition, destinationPositions);
   postMessage(result);
