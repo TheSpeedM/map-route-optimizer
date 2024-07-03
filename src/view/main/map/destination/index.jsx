@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Group, Circle, Text } from "react-konva";
 
 import { clamp } from "../../../../utils";
-import { destinationPosition, path } from "../../signals";
+import { destinationPosition, resetSignals } from "../../signals";
 
 const roundXY = (x, y, blocksize) => ({
   x: Math.round(x / blocksize) * blocksize,
@@ -45,7 +45,7 @@ export const Destination = ({
 
   const handleOnDragStart = () => {
     setCircle({ ...circle, isDragging: true });
-    path.value = [];
+    resetSignals();
   };
 
   const handleOnDragMove = (e) => {

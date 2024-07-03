@@ -6,6 +6,7 @@ import {
   Path,
   Position,
   DestinationPosition,
+  Statistics,
 } from "../../utils/types";
 
 const blocksize: Signal<number> = signal(100);
@@ -19,6 +20,13 @@ const path: Signal<Path[]> = signal([]);
 const robotPosition: Signal<Position> = signal({ x: 0, y: 0 });
 const destinationPosition: Signal<DestinationPosition[]> = signal([]);
 
+const algorithmStats: Signal<[string, Statistics][]> = signal([])
+
+const resetSignals = () => {
+  path.value = [];
+  algorithmStats.value = [];
+};
+
 export {
   blocksize,
   mapSize,
@@ -26,4 +34,6 @@ export {
   path,
   robotPosition,
   destinationPosition,
+  algorithmStats,
+  resetSignals
 };

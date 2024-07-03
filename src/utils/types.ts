@@ -74,3 +74,9 @@ export interface OptimizerWorkerMessage extends Event {
 }
 
 export interface OptimizerReturnMessage extends SolverReturnMessage {}
+
+export interface Statistics {
+  time: number;
+  paths: number;
+  length: number;
+}

@@ -7,6 +7,8 @@ import {
   path,
   robotPosition,
   destinationPosition,
+  algorithmStats,
+  resetSignals,
 } from "../signals";
 
 import { AlgorithmWithInputs, ButtonGroup } from "./buttongroup";
@@ -43,20 +45,20 @@ const addDestination = () => {
   }
 
   destinations.value = [...destinations.value, newDestination];
-  path.value = [];
+  resetSignals();
 };
 const removeDestination = () => {
   if (destinations.value.length > 0) {
     destinations.value = destinations.value.slice(0, -1);
     destinationPosition.value = destinationPosition.value.slice(0, -1);
-    path.value = [];
+    resetSignals();
   }
 };
 
 const clearDestinations = () => {
   destinations.value = [];
   destinationPosition.value = [];
-  path.value = [];
+  resetSignals();
 };
 
 const baseSolveUrl = "../../../calc/solve/";
@@ -75,14 +77,7 @@ export const Sidebar = () => {
   const [execTime, setExecTime] = useState(null);
   const [pathsSearched, setPathsSearched] = useState(null);
 
-  // Optimistic bruteforce
-  const bruteSpreadRef = useRef();
-
-  // Custom algorithm
-  const spreadRef = useRef();
-  const lookaheadRef = useRef();
-
-  const executeWorker = (baseUrl, workerType, message) => {
+  const executeWorker = (baseUrl, workerType, message, onMessage) => {
     const startTime = Date.now();
 
     if (worker !== null) {
@@ -99,11 +94,8 @@ export const Sidebar = () => {
       const result = e.data;
       if (!result) return;
 
-      setExecTime((Date.now() - startTime) / 1000);
-      path.value = result.coords;
+      onMessage(result, startTime);
 
-      setLength(result.length);
-      setPathsSearched(result.paths);
       setWorker(null);
       setIsLoading(false);
     };
@@ -127,19 +119,54 @@ export const Sidebar = () => {
         destinationPositions: destinationPosition.value,
         ...params,
       },
-      params
+      (result, startTime) => {
+        path.value = result.coords;
+
+        const statsObject = {
+          time: (Date.now() - startTime) / 1000,
+          length: result.length,
+          paths: result.paths,
+        };
+
+        algorithmStats.value = [
+          ...algorithmStats.value,
+          [workerType, statsObject],
+        ];
+
+        setExecTime((Date.now() - startTime) / 1000);
+        setLength(result.length);
+        setPathsSearched(result.paths);
+      }
     );
   };
 
   const executeOptimizer = (workerType, params = {}) => {
-    executeWorker(baseOptimizeUrl, workerType, {
-      coords: path.value,
-      ...params,
-    });
+    executeWorker(
+      baseOptimizeUrl,
+      workerType,
+      {
+        coords: path.value,
+        ...params,
+      },
+      (result, startTime) => {
+        const [lastKey, lastStats] = algorithmStats.value.at(-1);
+
+        const statsObject = {
+          time: lastStats.time + (Date.now() - startTime) / 1000,
+          length: result.length,
+          paths: lastStats.paths + result.paths,
+        };
+
+        algorithmStats.value = [
+          ...algorithmStats.value,
+          [`${lastKey} + ${workerType}`, statsObject],
+        ];
+      }
+    );
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-300 box-shadow-xl">
+    <div className="flex flex-col h-screen bg-gray-300 box-shadow-xl w-64">
       <div className="bg-inherit divide-y divide-gray-400 border-b border-gray-400">
         <div className="py-3 px-3">
           <h1 className="text-xl font-bold ">Map Route Optimizer</h1>
