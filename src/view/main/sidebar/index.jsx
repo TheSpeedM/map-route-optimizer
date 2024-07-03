@@ -73,9 +73,6 @@ export const Sidebar = () => {
 
   // Info
   const [isLoading, setIsLoading] = useState(false);
-  const [length, setLength] = useState(-1);
-  const [execTime, setExecTime] = useState(null);
-  const [pathsSearched, setPathsSearched] = useState(null);
 
   const executeWorker = (baseUrl, workerType, message, onMessage) => {
     const startTime = Date.now();
@@ -110,7 +107,7 @@ export const Sidebar = () => {
     setIsLoading(true);
   };
 
-  const executeSolver = (workerType, params = {}) => {
+  const executeSolver = (workerType, title, params = {}) => {
     executeWorker(
       baseSolveUrl,
       workerType,
@@ -124,23 +121,28 @@ export const Sidebar = () => {
 
         const statsObject = {
           time: (Date.now() - startTime) / 1000,
-          length: result.length,
-          paths: result.paths,
+          length: Number(result.length),
+          paths: Number(result.paths),
         };
 
-        algorithmStats.value = [
-          ...algorithmStats.value,
-          [workerType, statsObject],
-        ];
+        console.log(title);
+        const keyName = title ?? workerType;
 
-        setExecTime((Date.now() - startTime) / 1000);
-        setLength(result.length);
-        setPathsSearched(result.paths);
+        const keyAlreadyExists = algorithmStats.value.some((item) =>
+          item[0].includes(keyName)
+        );
+
+        if (!keyAlreadyExists) {
+          algorithmStats.value = [
+            ...algorithmStats.value,
+            [keyName, statsObject],
+          ].slice(-5);
+        }
       }
     );
   };
 
-  const executeOptimizer = (workerType, params = {}) => {
+  const executeOptimizer = (workerType, title, params = {}) => {
     executeWorker(
       baseOptimizeUrl,
       workerType,
@@ -149,18 +151,28 @@ export const Sidebar = () => {
         ...params,
       },
       (result, startTime) => {
+        path.value = result.coords;
+
         const [lastKey, lastStats] = algorithmStats.value.at(-1);
 
         const statsObject = {
           time: lastStats.time + (Date.now() - startTime) / 1000,
-          length: result.length,
-          paths: lastStats.paths + result.paths,
+          length: Number(result.length),
+          paths: Number(lastStats.paths) + Number(result.paths),
         };
 
-        algorithmStats.value = [
-          ...algorithmStats.value,
-          [`${lastKey} + ${workerType}`, statsObject],
-        ];
+        const keyName = title ?? workerType;
+
+        const keyAlreadyExists = algorithmStats.value.some(
+          (item) => item[0].includes(keyName) && item[0].includes(lastKey)
+        );
+
+        if (!keyAlreadyExists) {
+          algorithmStats.value = [
+            ...algorithmStats.value,
+            [`${lastKey} + ${keyName}`, statsObject],
+          ].slice(-5);
+        }
       }
     );
   };
@@ -177,20 +189,11 @@ export const Sidebar = () => {
           >
             TSP playground by Matth
           </a>
-        </div>
 
-        <div className="flex flex-col py-3 mx-3 text-sm font-mono leading-tight gap-1">
-          <p>
+          <p className="font-mono text-sm mt-3">
             {isLoading
               ? "Finding shortest path..."
               : "Waiting on user input..."}
-          </p>
-          <p>Length: {length > 0 ? Math.round(length) : "..."} px</p>
-          <p>
-            Searched {pathsSearched !== null ? pathsSearched : "0"} paths{" "}
-            {execTime !== null
-              ? `in ${Math.round(execTime * 10) / 10} seconds`
-              : ""}
           </p>
         </div>
       </div>
@@ -209,19 +212,21 @@ export const Sidebar = () => {
           buttons={[
             {
               title: "Bruteforce",
-              onClick: () => executeSolver("bruteforce"),
+              onClick: () => executeSolver("bruteforce", "Bruteforce"),
             },
             {
               title: "Closest neighbor",
-              onClick: () => executeSolver("closestneigbor"),
+              onClick: () =>
+                executeSolver("closestneigbor", "Closest neighbor"),
             },
             {
               title: "Furthest neighbor",
-              onClick: () => executeSolver("furthestneigbor"),
+              onClick: () =>
+                executeSolver("furthestneigbor", "Furthest neighbor"),
             },
             {
               title: "Closest from start",
-              onClick: () => executeSolver("fromstart"),
+              onClick: () => executeSolver("fromstart", "From start"),
             },
           ]}
         />
@@ -230,7 +235,7 @@ export const Sidebar = () => {
           title={"Optimistic bruteforce"}
           inputs={[{ title: "Spread" }]}
           onClick={(params) =>
-            executeSolver("lookahead", {
+            executeSolver("lookahead", "Optimistic bruteforce", {
               spread: params[0].value,
               lookahead: Infinity,
             })
@@ -242,14 +247,16 @@ export const Sidebar = () => {
           title={"Random guesses"}
           inputs={[{ title: "Guesses", default: 100 }]}
           onClick={(params) =>
-            executeSolver("randomguesses", { guesses: params[0].value })
+            executeSolver("randomguesses", "Random guesses", {
+              guesses: params[0].value,
+            })
           }
           startCollapsed
         />
 
         <AlgorithmWithInputs
           title={"Limited lookahead"}
-          inputs={[{ title: "Spread" }, { title: "Look ahead" }]}
+          inputs={[{ title: "Spread" }, { title: "Limited lookahead" }]}
           onClick={(params) =>
             executeSolver("lookahead", {
               spread: params[0].value,
@@ -261,7 +268,7 @@ export const Sidebar = () => {
 
         <AlgorithmWithInputs
           title={"Estimate length"}
-          inputs={[{ title: "Spread" }, { title: "Look ahead" }]}
+          inputs={[{ title: "Spread" }, { title: "Estimate length" }]}
           onClick={(params) =>
             executeSolver("estimatelength", {
               spread: params[0].value,
@@ -276,7 +283,8 @@ export const Sidebar = () => {
           buttons={[
             {
               title: "Redo intersects",
-              onClick: () => executeOptimizer("redointersects"),
+              onClick: () =>
+                executeOptimizer("redointersects", "Redo intersects"),
             },
           ]}
         />
