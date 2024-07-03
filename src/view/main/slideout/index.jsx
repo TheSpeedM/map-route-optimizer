@@ -13,7 +13,10 @@ export const ComparisonMenu = ({ startCollapsed = true }) => {
   };
 
   useSignalEffect(() => {
-    algorithmStats.value.length; // Just here so it triggers the effect
+    algorithmStats.value = algorithmStats.value.sort(
+      (a, b) => a[1].length - b[1].length
+    );
+
     setRefreshKey((refreshKey + 1) % 2);
   });
 

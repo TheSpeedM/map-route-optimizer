@@ -70,9 +70,11 @@ const getScriptUrl = (baseUrl, name) => {
 
 export const Sidebar = () => {
   const [worker, setWorker] = useState(null);
-
-  // Info
   const [isLoading, setIsLoading] = useState(false);
+  const [lastWorker, setLastWorker] = useState({
+    lastKey: null,
+    lastStats: null,
+  });
 
   const executeWorker = (baseUrl, workerType, message, onMessage) => {
     const startTime = Date.now();
@@ -125,24 +127,35 @@ export const Sidebar = () => {
           paths: Number(result.paths),
         };
 
-        console.log(title);
         const keyName = title ?? workerType;
 
-        const keyAlreadyExists = algorithmStats.value.some((item) =>
-          item[0].includes(keyName)
+        const keyLocation = algorithmStats.value.findIndex(
+          (item) => item[0] === keyName
         );
 
-        if (!keyAlreadyExists) {
-          algorithmStats.value = [
-            ...algorithmStats.value,
-            [keyName, statsObject],
-          ].slice(-5);
+        if (keyLocation !== -1) {
+          algorithmStats.value.splice(keyLocation, 1);
         }
+
+        algorithmStats.value = [
+          [keyName, statsObject],
+          ...algorithmStats.value,
+        ].slice(0, 5);
+
+        setLastWorker({
+          lastKey: keyName,
+          lastStats: statsObject,
+        });
       }
     );
   };
 
-  const executeOptimizer = (workerType, title, params = {}) => {
+  const executeOptimizer = (
+    workerType,
+    title,
+    params = {},
+    alwaysAdd = false
+  ) => {
     executeWorker(
       baseOptimizeUrl,
       workerType,
@@ -153,7 +166,8 @@ export const Sidebar = () => {
       (result, startTime) => {
         path.value = result.coords;
 
-        const [lastKey, lastStats] = algorithmStats.value.at(-1);
+        // TODO this isnt specifically the last key anymore...
+        const {lastKey, lastStats} = lastWorker;
 
         const statsObject = {
           time: lastStats.time + (Date.now() - startTime) / 1000,
@@ -163,16 +177,23 @@ export const Sidebar = () => {
 
         const keyName = title ?? workerType;
 
-        const keyAlreadyExists = algorithmStats.value.some(
+        const keyLocation = algorithmStats.value.findIndex(
           (item) => item[0].includes(keyName) && item[0].includes(lastKey)
         );
 
-        if (!keyAlreadyExists) {
-          algorithmStats.value = [
-            ...algorithmStats.value,
-            [`${lastKey} + ${keyName}`, statsObject],
-          ].slice(-5);
+        if (keyLocation !== -1) {
+          algorithmStats.value.splice(keyLocation, 1);
         }
+
+        algorithmStats.value = [
+          [`${lastKey} + ${keyName}`, statsObject],
+          ...algorithmStats.value,
+        ].slice(0, 5);
+
+        setLastWorker({
+          lastKey: `${lastKey} + ${keyName}`,
+          lastStats: statsObject,
+        });
       }
     );
   };
@@ -258,7 +279,7 @@ export const Sidebar = () => {
           title={"Limited lookahead"}
           inputs={[{ title: "Spread" }, { title: "Limited lookahead" }]}
           onClick={(params) =>
-            executeSolver("lookahead", {
+            executeSolver("lookahead", "Look ahead", {
               spread: params[0].value,
               lookahead: params[1].value,
             })
@@ -270,7 +291,7 @@ export const Sidebar = () => {
           title={"Estimate length"}
           inputs={[{ title: "Spread" }, { title: "Estimate length" }]}
           onClick={(params) =>
-            executeSolver("estimatelength", {
+            executeSolver("estimatelength", "Estimate length", {
               spread: params[0].value,
               lookahead: params[1].value,
             })
