@@ -17,6 +17,7 @@ export const ComparisonMenu = ({ startCollapsed = true }) => {
       (a, b) => a[1].length - b[1].length
     );
 
+    setTimeout(() => setCollapsed(algorithmStats.value.length === 0), 1000);
     setRefreshKey((refreshKey + 1) % 2);
   });
 
@@ -45,6 +46,9 @@ export const ComparisonMenu = ({ startCollapsed = true }) => {
         </button>
 
         <div className="text-sm font-mono divide-y divide-gray-400">
+          {algorithmStats.value.length === 0 && (
+            <p className="py-1">Select a solver to compare</p>
+          )}
           {algorithmStats.value.map((stats, index) => (
             <div key={index} className="py-1">
               <h3>{stats[0]}</h3>

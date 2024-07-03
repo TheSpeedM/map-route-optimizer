@@ -150,12 +150,10 @@ export const Sidebar = () => {
     );
   };
 
-  const executeOptimizer = (
-    workerType,
-    title,
-    params = {},
-    alwaysAdd = false
-  ) => {
+  const executeOptimizer = (workerType, title, params = {}) => {
+    if (algorithmStats.value.length === 0)
+      throw new Error("Execute a solver first");
+
     executeWorker(
       baseOptimizeUrl,
       workerType,
@@ -166,8 +164,14 @@ export const Sidebar = () => {
       (result, startTime) => {
         path.value = result.coords;
 
-        // TODO this isnt specifically the last key anymore...
-        const {lastKey, lastStats} = lastWorker;
+        const { lastKey, lastStats } = lastWorker;
+
+        // Skip if the optimizer did nothing
+        if (
+          Number(result.length) === Number(lastStats.length) &&
+          Number(result.paths) === 0
+        )
+          return;
 
         const statsObject = {
           time: lastStats.time + (Date.now() - startTime) / 1000,
@@ -189,11 +193,6 @@ export const Sidebar = () => {
           [`${lastKey} + ${keyName}`, statsObject],
           ...algorithmStats.value,
         ].slice(0, 5);
-
-        setLastWorker({
-          lastKey: `${lastKey} + ${keyName}`,
-          lastStats: statsObject,
-        });
       }
     );
   };
@@ -256,10 +255,14 @@ export const Sidebar = () => {
           title={"Optimistic bruteforce"}
           inputs={[{ title: "Spread" }]}
           onClick={(params) =>
-            executeSolver("lookahead", "Optimistic bruteforce", {
-              spread: params[0].value,
-              lookahead: Infinity,
-            })
+            executeSolver(
+              "lookahead",
+              `Optimistic bruteforce (${params[0].value})`,
+              {
+                spread: params[0].value,
+                lookahead: Infinity,
+              }
+            )
           }
           startCollapsed
         />
@@ -268,21 +271,29 @@ export const Sidebar = () => {
           title={"Random guesses"}
           inputs={[{ title: "Guesses", default: 100 }]}
           onClick={(params) =>
-            executeSolver("randomguesses", "Random guesses", {
-              guesses: params[0].value,
-            })
+            executeSolver(
+              "randomguesses",
+              `Random guesses (${params[0].value})`,
+              {
+                guesses: params[0].value,
+              }
+            )
           }
           startCollapsed
         />
 
         <AlgorithmWithInputs
           title={"Limited lookahead"}
-          inputs={[{ title: "Spread" }, { title: "Limited lookahead" }]}
+          inputs={[{ title: "Spread" }, { title: "Lookahead" }]}
           onClick={(params) =>
-            executeSolver("lookahead", "Look ahead", {
-              spread: params[0].value,
-              lookahead: params[1].value,
-            })
+            executeSolver(
+              "lookahead",
+              `Look ahead (${params[0].value}, ${params[1].value})`,
+              {
+                spread: params[0].value,
+                lookahead: params[1].value,
+              }
+            )
           }
           startCollapsed
         />
@@ -291,10 +302,14 @@ export const Sidebar = () => {
           title={"Estimate length"}
           inputs={[{ title: "Spread" }, { title: "Estimate length" }]}
           onClick={(params) =>
-            executeSolver("estimatelength", "Estimate length", {
-              spread: params[0].value,
-              lookahead: params[1].value,
-            })
+            executeSolver(
+              "estimatelength",
+              `Estimate length (${params[0].value}, ${params[1].value})`,
+              {
+                spread: params[0].value,
+                lookahead: params[1].value,
+              }
+            )
           }
           startCollapsed
         />
