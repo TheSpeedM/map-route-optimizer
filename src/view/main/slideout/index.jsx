@@ -13,13 +13,14 @@ export const ComparisonMenu = ({ startCollapsed = true }) => {
   };
 
   useSignalEffect(() => {
-    setRefreshKey(algorithmStats.value.length);
+    algorithmStats.value.length; // Just here so it triggers the effect
+    setRefreshKey((refreshKey + 1) % 2);
   });
 
   return (
     <div
       key={refreshKey}
-      className={`absolute bottom-0 right-5 bg-gray-300 p-2 w-60 transform transition ${collapsed ? "translate-y-[calc(100%-2.5rem)]" : "translate-y-0"} rounded-t-md`}
+      className={`absolute bottom-0 right-5 bg-gray-300 p-2 w-72 transform transition ${collapsed ? "translate-y-[calc(100%-2.5rem)]" : "translate-y-0"} rounded-t-md`}
     >
       <div>
         <button

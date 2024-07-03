@@ -124,18 +124,24 @@ export const Sidebar = () => {
 
         const statsObject = {
           time: (Date.now() - startTime) / 1000,
-          length: result.length,
-          paths: result.paths,
+          length: Number(result.length),
+          paths: Number(result.paths),
         };
 
-        algorithmStats.value = [
-          ...algorithmStats.value,
-          [workerType, statsObject],
-        ];
+        const keyAlreadyExists = algorithmStats.value.some((item) =>
+          item[0].includes(workerType)
+        );
 
-        setExecTime((Date.now() - startTime) / 1000);
-        setLength(result.length);
-        setPathsSearched(result.paths);
+        if (!keyAlreadyExists) {
+          algorithmStats.value = [
+            ...algorithmStats.value,
+            [workerType, statsObject],
+          ].slice(-5);
+        }
+
+        setExecTime(statsObject.time);
+        setLength(statsObject.length);
+        setPathsSearched(statsObject.paths);
       }
     );
   };
@@ -149,18 +155,30 @@ export const Sidebar = () => {
         ...params,
       },
       (result, startTime) => {
+        path.value = result.coords;
+
         const [lastKey, lastStats] = algorithmStats.value.at(-1);
 
         const statsObject = {
           time: lastStats.time + (Date.now() - startTime) / 1000,
-          length: result.length,
-          paths: lastStats.paths + result.paths,
+          length: Number(result.length),
+          paths: Number(lastStats.paths) + Number(result.paths),
         };
 
-        algorithmStats.value = [
-          ...algorithmStats.value,
-          [`${lastKey} + ${workerType}`, statsObject],
-        ];
+        const keyAlreadyExists = algorithmStats.value.some(
+          (item) => item[0].includes(workerType) && item[0].includes(lastKey)
+        );
+
+        if (!keyAlreadyExists) {
+          algorithmStats.value = [
+            ...algorithmStats.value,
+            [`${lastKey} + ${workerType}`, statsObject],
+          ].slice(-5);
+        }
+
+        setExecTime(statsObject.time);
+        setLength(statsObject.length);
+        setPathsSearched(statsObject.paths);
       }
     );
   };
